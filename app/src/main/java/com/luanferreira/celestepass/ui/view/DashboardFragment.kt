@@ -1,10 +1,11 @@
 package com.luanferreira.celestepass.ui.view
 
 import android.os.Bundle
-import android.util.Log // Adicione para teste
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -30,19 +31,23 @@ class DashboardFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         observeViewModel()
 
         binding.fabAdicionarJogo.setOnClickListener {
-            Log.d("DashboardFragment", "FAB (botão +) clicado!") // Log de teste
-            // ✅ AÇÃO DE NAVEGAÇÃO CORRETA AQUI ✅
             findNavController().navigate(R.id.action_dashboardFragment_to_addGameFragment)
+        }
+
+        // Configurar listener para clique no item do jogo (para ir para detalhes)
+        adapter.onItemClickListener = { jogo ->
+            // Ação de navegação para DetalhesJogoFragment (a ser criada no nav_graph)
+            // val action = DashboardFragmentDirections.actionDashboardFragmentToDetalhesJogoFragment(jogo.id)
+            // findNavController().navigate(action)
+            Toast.makeText(context, "Clicou no jogo: ${jogo.adversarioNome}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -54,8 +59,17 @@ class DashboardFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.todosOsJogos.observe(viewLifecycleOwner) { jogos ->
             jogos?.let {
+                Log.d("DashboardFragment", "Lista de jogos recebida, tamanho: ${it.size}")
                 adapter.submitList(it)
             }
+        }
+
+        viewModel.lucroDoMes.observe(viewLifecycleOwner) { lucroMes ->
+            binding.textViewLucroMes.text = lucroMes
+        }
+
+        viewModel.lucroDoAno.observe(viewLifecycleOwner) { lucroAno ->
+            binding.textViewLucroAno.text = lucroAno
         }
     }
 

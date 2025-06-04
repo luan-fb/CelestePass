@@ -9,21 +9,44 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_layout_adversario"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Nome do Adversário"
+        android:hint="Selecione o Adversário"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <AutoCompleteTextView
             android:id="@+id/edit_text_adversario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textCapWords" />
+            android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/image_view_preview_escudo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_layout_adversario"
+        tools:src="@drawable/ic_shield"
+        android:contentDescription="Preview do escudo do adversário"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_escudo"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/image_view_preview_escudo"
+        app:layout_constraintTop_toTopOf="@id/image_view_preview_escudo"
+        app:layout_constraintBottom_toBottomOf="@id/image_view_preview_escudo"
+        android:layout_marginStart="8dp"/>
+
 
     <Button
         android:id="@+id/button_selecionar_data"
@@ -32,7 +55,7 @@
         android:layout_marginTop="16dp"
         android:text="Selecionar Data"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_layout_adversario" />
+        app:layout_constraintTop_toBottomOf="@id/image_view_preview_escudo" />
 
     <TextView
         android:id="@+id/text_view_data_selecionada"

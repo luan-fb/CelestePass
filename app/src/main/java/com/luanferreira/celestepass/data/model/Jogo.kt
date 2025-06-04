@@ -8,6 +8,7 @@ import java.util.Date
 data class Jogo(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val adversario: String,
-    val data: Date) {
-}
+    val adversarioNome: String,
+    val adversarioEscudoUrl: String?, // Pode ser nulo se a API falhar ou não tiver escudo
+    val data: Date
+)

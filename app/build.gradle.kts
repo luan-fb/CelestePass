@@ -90,4 +90,17 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
 
+    // Retrofit para chamadas de API
+    implementation("com.squareup.retrofit2:retrofit:2.9.0") // Ou a versão mais recente
+    // Conversor Gson para Retrofit (para interpretar o JSON da API)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Coil para carregar imagens (escudos)
+    implementation("io.coil-kt:coil:2.6.0") // Verifique a versão mais recente
+
+    // OkHttp Logging Interceptor (para depurar chamadas de API, muito útil!)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") // Verifique a versão a versão
+
+    
+
 }

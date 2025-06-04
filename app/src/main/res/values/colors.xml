@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="cruzeiro_blue">#003F7E</color>
+    <color name="cruzeiro_blue_dark">#002C5A</color>
+
+
 </resources>
