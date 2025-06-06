@@ -8,12 +8,30 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.luanferreira.celestepass.ui.view.DashboardFragment"
-        android:label="CelestePass Dashboard" tools:layout="@layout/fragment_dashboard" >
+        android:label="CelestePass Dashboard"
+        tools:layout="@layout/fragment_dashboard" >
         <action
             android:id="@+id/action_dashboardFragment_to_addGameFragment"
             app:destination="@id/addGameFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_detalhesJogoFragment"
+            app:destination="@id/detalhesJogoFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/addGameFragment"
-        android:name="com.luanferreira.celestepass.ui.view.AddGameFragment" android:label="Adicionar Novo Jogo" tools:layout="@layout/fragment_add_game" />
+        android:name="com.luanferreira.celestepass.ui.view.AddGameFragment"
+        android:label="Adicionar Novo Jogo"
+        tools:layout="@layout/fragment_add_game" />
+
+    <fragment
+        android:id="@+id/detalhesJogoFragment"
+        android:name="com.luanferreira.celestepass.ui.view.DetalhesJogoFragment"
+        android:label="Detalhes do Jogo"
+        tools:layout="@layout/fragment_detalhes_jogo">
+        <argument
+            android:name="jogoId"
+            app:argType="long" />
+    </fragment>
+
 </navigation>

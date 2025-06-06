@@ -1,6 +1,7 @@
 package com.luanferreira.celestepass.data.repository
 
 import com.luanferreira.celestepass.data.local.*
+import com.luanferreira.celestepass.data.model.Ingresso
 import com.luanferreira.celestepass.data.model.Jogo
 import com.luanferreira.celestepass.data.model.TimeCrestResponse
 import com.luanferreira.celestepass.data.model.Venda // Importe Venda
@@ -44,5 +45,19 @@ class CelestePassRepositoryImpl(
         // Lógica para buscar vendas do ano atual usando vendaDao
         // Exemplo muito simplificado:
         return vendaDao.getTodasAsVendas() // Substitua por uma query real
+
     }
+
+    override fun getJogoPorId(jogoId: Long): Flow<Jogo?> {
+        return jogoDao.getJogoPorId(jogoId)
+    }
+
+    override fun getVendasDoJogo(jogoId: Long): Flow<List<Venda>> {
+        return vendaDao.getVendasDoJogo(jogoId)
+    }
+
+    override fun getIngressosCompradosDoJogo(jogoId: Long): Flow<List<Ingresso>> {
+        return ingressoDao.getIngressosDoJogo(jogoId)
+    }
+
 }

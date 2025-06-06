@@ -13,4 +13,8 @@ interface JogoDao {
 
     @Query("SELECT * FROM jogos ORDER BY data DESC")
     fun getAllJogos(): Flow<List<Jogo>>
+
+    @Query("SELECT * FROM jogos WHERE id = :jogoId")
+    fun getJogoPorId(jogoId: Long): Flow<Jogo?> // Retorna Flow para observação
+
 }

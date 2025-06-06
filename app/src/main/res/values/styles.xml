@@ -1,0 +1,34 @@
+<resources>
+    <!-- ... seu tema principal fica em themes.xml, não aqui ... -->
+
+    <!-- ✅ ADICIONE ESTA LINHA QUE ESTAVA FALTANDO ✅ -->
+    <!-- Define o grupo "pai" para os nossos estilos. Pode ser vazio. -->
+    <style name="Widget.App" parent=""></style>
+
+    <style name="Widget.App.CardResumo" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardElevation">2dp</item>
+    </style>
+
+    <style name="Widget.App.LinearLayoutCardResumo">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Widget.App.TextViewCardResumoTitulo" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceCaption</item>
+    </style>
+
+    <style name="Widget.App.TextViewCardResumoValor" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceHeadline6</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

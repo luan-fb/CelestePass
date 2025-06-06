@@ -44,10 +44,10 @@ class DashboardFragment : Fragment() {
 
         // Configurar listener para clique no item do jogo (para ir para detalhes)
         adapter.onItemClickListener = { jogo ->
-            // Ação de navegação para DetalhesJogoFragment (a ser criada no nav_graph)
-            // val action = DashboardFragmentDirections.actionDashboardFragmentToDetalhesJogoFragment(jogo.id)
-            // findNavController().navigate(action)
-            Toast.makeText(context, "Clicou no jogo: ${jogo.adversarioNome}", Toast.LENGTH_SHORT).show()
+            // Log.d("DashboardFragment", "Jogo clicado: ID ${jogo.id}, Adversário: ${jogo.adversarioNome}") // Log para confirmar
+            // ✅ NAVEGAÇÃO PARA DETALHES DO JOGO COM O ID ✅
+            val action = DashboardFragmentDirections.actionDashboardFragmentToDetalhesJogoFragment(jogo.id)
+            findNavController().navigate(action)
         }
     }
 
