@@ -5,19 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels // Mude o import
 import com.luanferreira.celestepass.R
+import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel // Importe o ViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class EntregasJogoFragment : Fragment() {
-    private var jogoId: Long = -1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            jogoId = it.getLong(ARG_JOGO_ID)
-        }
-    }
+    // ✅ CORREÇÃO: Usamos viewModels({ requireParentFragment() })
+    private val viewModel: DetalhesJogoViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,7 +25,7 @@ class EntregasJogoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Lógica para configurar RecyclerView para entregas pendentes.
+        // Lógica futura para a aba de entregas
     }
 
     companion object {
@@ -41,4 +38,3 @@ class EntregasJogoFragment : Fragment() {
             }
     }
 }
-

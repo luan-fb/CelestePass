@@ -30,7 +30,7 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "celestepass_db"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     // DAOs

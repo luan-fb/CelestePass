@@ -1,5 +1,6 @@
 package com.luanferreira.celestepass.ui.view
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -39,12 +40,12 @@ class DashboardFragment : Fragment() {
         observeViewModel()
 
         binding.fabAdicionarJogo.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboardFragment_to_addGameFragment)
+            mostrarDialogoDeAcoesFab()
         }
+
 
         // Configurar listener para clique no item do jogo (para ir para detalhes)
         adapter.onItemClickListener = { jogo ->
-            // Log.d("DashboardFragment", "Jogo clicado: ID ${jogo.id}, Adversário: ${jogo.adversarioNome}") // Log para confirmar
             // ✅ NAVEGAÇÃO PARA DETALHES DO JOGO COM O ID ✅
             val action = DashboardFragmentDirections.actionDashboardFragmentToDetalhesJogoFragment(jogo.id)
             findNavController().navigate(action)
@@ -71,6 +72,20 @@ class DashboardFragment : Fragment() {
         viewModel.lucroDoAno.observe(viewLifecycleOwner) { lucroAno ->
             binding.textViewLucroAno.text = lucroAno
         }
+    }
+
+    private fun mostrarDialogoDeAcoesFab() {
+        val opcoes = arrayOf("Cadastrar Jogo", "Gerir Cadastros") // Opções atualizadas
+        AlertDialog.Builder(requireContext())
+            .setTitle("O que deseja fazer?")
+            .setItems(opcoes) { dialog, which ->
+                when (which) {
+                    0 -> findNavController().navigate(R.id.action_dashboardFragment_to_addGameFragment)
+                    1 -> findNavController().navigate(R.id.action_dashboardFragment_to_managementFragment)
+                }
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onDestroyView() {

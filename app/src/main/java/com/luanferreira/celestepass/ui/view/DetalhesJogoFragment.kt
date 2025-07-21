@@ -1,13 +1,15 @@
 package com.luanferreira.celestepass.ui.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayoutMediator
+import com.luanferreira.celestepass.R
 import com.luanferreira.celestepass.databinding.FragmentDetalhesJogoBinding
 import com.luanferreira.celestepass.ui.adapter.DetalhesJogoPagerAdapter
 import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel
@@ -22,7 +24,7 @@ class DetalhesJogoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: DetalhesJogoViewModel by viewModels()
-    private val args: DetalhesJogoFragmentArgs by navArgs() // Para pegar o jogoId
+    private val args: DetalhesJogoFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,16 +37,47 @@ class DetalhesJogoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // O jogoId é acessível via args.jogoId
-        // Log.d("DetalhesJogoFragment", "ID do Jogo recebido: ${args.jogoId}")
-
         setupViewPager()
         observeViewModel()
 
-        // Configurar o FAB (botão +) para futuras ações (ex: adicionar ingresso, registrar venda)
+        // AÇÃO DO FAB (a implementar)
         binding.fabDetalhesJogo.setOnClickListener {
-            // Implementar ações do FAB (ex: abrir um menu ou navegar para outra tela)
+            // A implementar no próximo passo do checklist
         }
+
+        // Adiciona o listener para o botão de deletar
+        binding.buttonDeletarJogo.setOnClickListener {
+            mostrarDialogoDelecao()
+        }
+
+        binding.fabDetalhesJogo.setOnClickListener {
+            // ✅ NAVEGAÇÃO PARA A NOVA TELA
+            // Passa o ID do jogo atual como argumento
+            val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToAddTicketLotFragment(args.jogoId)
+            findNavController().navigate(action)
+        }
+
+        binding.buttonDeletarJogo.setOnClickListener {
+            mostrarDialogoDelecao()
+        }
+
+    }
+
+    // A função para mostrar o diálogo de confirmação permanece a mesma
+    private fun mostrarDialogoDelecao() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar Exclusão")
+            .setMessage("Tem certeza de que deseja deletar este jogo? Esta ação não pode ser desfeita.")
+            .setIcon(R.drawable.ic_delete)
+            .setPositiveButton("Deletar") { dialog, _ ->
+                viewModel.deletarJogoAtual()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun setupViewPager() {
@@ -52,8 +85,8 @@ class DetalhesJogoFragment : Fragment() {
         TabLayoutMediator(binding.tabLayoutDetalhesJogo, binding.viewPagerDetalhesJogo) { tab, position ->
             tab.text = when (position) {
                 0 -> "Vendas"
-                1 -> "Ingressos" // Ingressos comprados
-                2 -> "Entregas"  // Entregas Pendentes
+                1 -> "Ingressos"
+                2 -> "Entregas"
                 else -> null
             }
         }.attach()
@@ -65,8 +98,6 @@ class DetalhesJogoFragment : Fragment() {
                 val formatadorData = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale("pt", "BR"))
                 binding.textViewNomeJogoDetalhes.text = "Cruzeiro vs. ${it.adversarioNome}"
                 binding.textViewDataJogoDetalhes.text = formatadorData.format(it.data)
-                // Atualizar o título da ActionBar (opcional, pois a CollapsingToolbar já mostra)
-                // (requireActivity() as AppCompatActivity).supportActionBar?.title = "Cruzeiro vs. ${it.adversarioNome}"
             }
         }
 
@@ -75,6 +106,14 @@ class DetalhesJogoFragment : Fragment() {
                 binding.textViewInvestidoJogo.text = viewModel.formatarMoeda(it.investido)
                 binding.textViewVendidoJogo.text = viewModel.formatarMoeda(it.vendido)
                 binding.textViewLucroJogo.text = viewModel.formatarMoeda(it.lucro)
+            }
+        }
+
+        viewModel.jogoDeletadoEvento.observe(viewLifecycleOwner) { foiDeletado ->
+            if (foiDeletado == true) {
+                Toast.makeText(context, "Jogo deletado com sucesso!", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+                viewModel.onJogoDeletadoEventoCompleto()
             }
         }
     }

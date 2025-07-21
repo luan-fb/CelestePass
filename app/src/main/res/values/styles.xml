@@ -1,8 +1,5 @@
 <resources>
-    <!-- ... seu tema principal fica em themes.xml, não aqui ... -->
 
-    <!-- ✅ ADICIONE ESTA LINHA QUE ESTAVA FALTANDO ✅ -->
-    <!-- Define o grupo "pai" para os nossos estilos. Pode ser vazio. -->
     <style name="Widget.App" parent=""></style>
 
     <style name="Widget.App.CardResumo" parent="Widget.Material3.CardView.Elevated">

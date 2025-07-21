@@ -1,8 +1,10 @@
 package com.luanferreira.celestepass.data.repository
 
 import com.luanferreira.celestepass.data.local.*
+import com.luanferreira.celestepass.data.model.Cliente
 import com.luanferreira.celestepass.data.model.Ingresso
 import com.luanferreira.celestepass.data.model.Jogo
+import com.luanferreira.celestepass.data.model.Setor
 import com.luanferreira.celestepass.data.model.TimeCrestResponse
 import com.luanferreira.celestepass.data.model.Venda // Importe Venda
 import com.luanferreira.celestepass.data.remote.ApiService
@@ -29,12 +31,15 @@ class CelestePassRepositoryImpl(
         jogoDao.insert(jogo)
     }
 
+    override suspend fun deleteJogo(jogo: Jogo) {
+        jogoDao.delete(jogo)
+    }
+
     override suspend fun getEscudoDoTimePelaApi(timeId: Int): Response<TimeCrestResponse> {
         return apiService.getTeamDetails(FOOTBALL_DATA_AUTH_TOKEN, timeId)
     }
 
     // EXEMPLO SIMPLES - A LÓGICA REAL SERÁ MAIS COMPLEXA E USARÁ OS DAOs
-    // Você precisará de queries nos seus DAOs para buscar vendas por período
     override fun getVendasDoMes(): Flow<List<Venda>> {
         // Lógica para buscar vendas do mês atual usando vendaDao
         // Exemplo muito simplificado:
@@ -43,7 +48,6 @@ class CelestePassRepositoryImpl(
 
     override fun getVendasDoAno(): Flow<List<Venda>> {
         // Lógica para buscar vendas do ano atual usando vendaDao
-        // Exemplo muito simplificado:
         return vendaDao.getTodasAsVendas() // Substitua por uma query real
 
     }
@@ -59,5 +63,38 @@ class CelestePassRepositoryImpl(
     override fun getIngressosCompradosDoJogo(jogoId: Long): Flow<List<Ingresso>> {
         return ingressoDao.getIngressosDoJogo(jogoId)
     }
+
+
+    override suspend fun insertIngresso(ingresso: Ingresso) {
+        ingressoDao.insert(ingresso)
+    }
+
+    override fun getAllSetores(): Flow<List<Setor>> {
+        return setorDao.getAllSetores()
+    }
+
+    override suspend fun insertSetor(setor: Setor) {
+        setorDao.insert(setor)
+    }
+
+    override suspend fun insertCliente(cliente: Cliente) {
+        clienteDao.insert(cliente)
+    }
+
+
+    override suspend fun deleteCliente(cliente: Cliente) {
+        clienteDao.delete(cliente)
+    }
+
+    override suspend fun deleteSetor(setor: Setor) {
+        setorDao.delete(setor)
+    }
+
+
+
+    override fun getClientes(): Flow<List<Cliente>> {
+        return clienteDao.getAllClientes()
+    }
+
 
 }

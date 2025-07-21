@@ -5,30 +5,54 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.luanferreira.celestepass.R
+import androidx.fragment.app.viewModels // Mude o import
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.luanferreira.celestepass.databinding.FragmentIngressosCompradosBinding
+import com.luanferreira.celestepass.ui.adapter.IngressoAdapter
+import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class IngressosCompradosFragment : Fragment() {
-    private var jogoId: Long = -1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            jogoId = it.getLong(ARG_JOGO_ID)
-        }
-    }
+    private var _binding: FragmentIngressosCompradosBinding? = null
+    private val binding get() = _binding!!
+
+    // ✅ CORREÇÃO: Usamos viewModels({ requireParentFragment() })
+    private val viewModel: DetalhesJogoViewModel by viewModels({ requireParentFragment() })
+    private val ingressoAdapter = IngressoAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_tab_placeholder, container, false)
+    ): View {
+        _binding = FragmentIngressosCompradosBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Lógica para configurar RecyclerView para ingressos comprados.
+        setupRecyclerView()
+        observeViewModel()
+    }
+
+    private fun setupRecyclerView() {
+        binding.recyclerViewIngressosComprados.apply {
+            adapter = ingressoAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+    }
+
+    private fun observeViewModel() {
+        // Esta observação agora funcionará corretamente
+        viewModel.ingressosComSetor.observe(viewLifecycleOwner) { listaIngressos ->
+            ingressoAdapter.submitList(listaIngressos)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

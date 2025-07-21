@@ -8,7 +8,7 @@ import com.luanferreira.celestepass.data.model.*
 
 @Database(
     entities = [Jogo::class, Setor::class, Cliente::class, Ingresso::class, Venda::class],
-    version = 1 // Incremente a versão se mudar a estrutura das tabelas
+    version = 2 // Incremente a versão se mudar a estrutura das tabelas
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

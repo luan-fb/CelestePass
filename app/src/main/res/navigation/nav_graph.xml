@@ -16,6 +16,15 @@
         <action
             android:id="@+id/action_dashboardFragment_to_detalhesJogoFragment"
             app:destination="@id/detalhesJogoFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_addSetorFragment"
+            app:destination="@id/addSetorFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_addClienteFragment"
+            app:destination="@id/addClienteFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_managementFragment"
+            app:destination="@id/managementFragment" />
     </fragment>
 
     <fragment
@@ -32,6 +41,43 @@
         <argument
             android:name="jogoId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_detalhesJogoFragment_to_addTicketLotFragment"
+            app:destination="@id/addTicketLotFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addTicketLotFragment"
+        android:name="com.luanferreira.celestepass.ui.view.AddTicketLotFragment"
+        android:label="Adicionar Lote de Ingressos"
+        tools:layout="@layout/fragment_add_ticket_lot">
+        <argument
+            android:name="jogoId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addSetorFragment"
+        android:name="com.luanferreira.celestepass.ui.view.AddSetorFragment"
+        android:label="Cadastrar Novo Setor"
+        tools:layout="@layout/fragment_add_setor" />
+    <fragment
+        android:id="@+id/addClienteFragment"
+        android:name="com.luanferreira.celestepass.ui.view.AddClienteFragment"
+        android:label="Cadastrar Novo Cliente"
+        tools:layout="@layout/fragment_add_cliente" />
+
+    <fragment
+        android:id="@+id/managementFragment"
+        android:name="com.luanferreira.celestepass.ui.view.ManagementFragment"
+        android:label="Gerir Cadastros"
+        tools:layout="@layout/fragment_management">
+        <action
+            android:id="@+id/action_managementFragment_to_addClienteFragment"
+            app:destination="@id/addClienteFragment" />
+        <action
+            android:id="@+id/action_managementFragment_to_addSetorFragment"
+            app:destination="@id/addSetorFragment" />
     </fragment>
 
 </navigation>

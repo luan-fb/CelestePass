@@ -5,33 +5,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.luanferreira.celestepass.R // Ou seu R específico do módulo
+import androidx.fragment.app.viewModels // Mude o import
+import com.luanferreira.celestepass.R
+import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel // Importe o ViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class VendasJogoFragment : Fragment() {
-    private var jogoId: Long = -1
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            jogoId = it.getLong(ARG_JOGO_ID)
-        }
-    }
+    // ✅ CORREÇÃO: Usamos viewModels({ requireParentFragment() }) para partilhar
+    // o ViewModel com o DetalhesJogoFragment (o pai).
+    private val viewModel: DetalhesJogoViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflar o layout para este fragmento (ex: fragment_vendas_jogo.xml)
-        // Por enquanto, um layout simples com um TextView
+        // Por agora, continuamos a usar o layout de placeholder.
+        // Futuramente, aqui teremos um RecyclerView para as vendas.
         return inflater.inflate(R.layout.fragment_tab_placeholder, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Configurar RecyclerView para mostrar vendas do jogo com ID: jogoId
-        // (view.findViewById<TextView>(R.id.text_placeholder)).text = "Vendas do Jogo ID: $jogoId"
+        // Aqui você pode observar os dados de vendas do viewModel
+        // viewModel.vendasDoJogo.observe(viewLifecycleOwner) { vendas -> ... }
     }
 
     companion object {

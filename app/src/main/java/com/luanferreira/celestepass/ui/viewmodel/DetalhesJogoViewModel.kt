@@ -5,7 +5,10 @@ import com.luanferreira.celestepass.data.model.Ingresso
 import com.luanferreira.celestepass.data.model.Jogo
 import com.luanferreira.celestepass.data.model.Venda
 import com.luanferreira.celestepass.data.repository.CelestePassRepository
+import com.luanferreira.celestepass.ui.adapter.IngressoComSetor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -26,6 +29,27 @@ class DetalhesJogoViewModel @Inject constructor(
     private val jogoId: Long = savedStateHandle.get<Long>("jogoId")!!
 
     val jogo: LiveData<Jogo?> = repository.getJogoPorId(jogoId).asLiveData()
+
+    // LiveData para avisar a UI que o jogo foi deletado
+    private val _jogoDeletadoEvento = MutableLiveData<Boolean>()
+    val jogoDeletadoEvento: LiveData<Boolean> get() = _jogoDeletadoEvento
+
+    // FUNÇÃO para deletar o jogo atual
+    fun deletarJogoAtual() {
+        // Pega o jogo atual que está sendo observado pelo LiveData
+        jogo.value?.let { jogoParaDeletar ->
+            viewModelScope.launch {
+                repository.deleteJogo(jogoParaDeletar)
+                // Avisa a UI que a operação foi concluída
+                _jogoDeletadoEvento.postValue(true)
+            }
+        }
+    }
+
+    // FUNÇÃO para resetar o evento após a navegação
+    fun onJogoDeletadoEventoCompleto() {
+        _jogoDeletadoEvento.value = false
+    }
 
     val ingressosComprados: LiveData<List<Ingresso>> = repository.getIngressosCompradosDoJogo(jogoId).asLiveData()
     val vendasDoJogo: LiveData<List<Venda>> = repository.getVendasDoJogo(jogoId).asLiveData()
@@ -58,4 +82,14 @@ class DetalhesJogoViewModel @Inject constructor(
         val formatoMoeda = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
         return formatoMoeda.format(valor)
     }
+    val ingressosComSetor: LiveData<List<IngressoComSetor>> =
+        repository.getIngressosCompradosDoJogo(jogoId)
+            .combine(repository.getAllSetores()) { ingressos, setores ->
+                ingressos.map { ingresso ->
+                    IngressoComSetor(
+                        ingresso = ingresso,
+                        setor = setores.find { it.id == ingresso.setorId }
+                    )
+                }
+            }.asLiveData()
 }

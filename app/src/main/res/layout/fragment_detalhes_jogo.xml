@@ -1,68 +1,54 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.view.DetalhesJogoFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_layout"
-        android:layout_width="match_parent"
+    <!-- Cabeçalho com informações do jogo -->
+    <LinearLayout
+        android:id="@+id/header_layout_detalhes"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:background="?attr/colorPrimary"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- A Toolbar será controlada pela MainActivity, mas podemos ter um espaço para o título do jogo aqui -->
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar_layout"
+        <TextView
+            android:id="@+id/text_view_nome_jogo_detalhes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:titleEnabled="false"> <!-- O título será gerenciado pela MainActivity -->
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:textColor="@android:color/white"
+            tools:text="Cruzeiro vs. Flamengo" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="?attr/actionBarSize"
-                android:paddingBottom="16dp"
-                android:paddingHorizontal="16dp"
-                android:background="?attr/colorPrimary"
-                app:layout_collapseMode="parallax">
+        <TextView
+            android:id="@+id/text_view_data_jogo_detalhes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="@android:color/white"
+            tools:text="31 de Maio de 2025" />
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/text_view_nome_jogo_detalhes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadline5"
-                    android:textColor="@android:color/white"
-                    tools:text="Cruzeiro vs. Flamengo" />
-
-                <TextView
-                    android:id="@+id/text_view_data_jogo_detalhes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceSubtitle1"
-                    android:textColor="@android:color/white"
-                    tools:text="31 de Maio de 2025" />
-            </LinearLayout>
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
+    <!-- Conteúdo principal com scroll -->
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header_layout_detalhes"
+        app:layout_constraintBottom_toTopOf="@id/button_deletar_jogo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Cards de Resumo Financeiro do Jogo -->
+            <!-- Cards de Resumo -->
             <LinearLayout
                 android:id="@+id/layout_cards_resumo_jogo"
                 android:layout_width="match_parent"
@@ -70,6 +56,7 @@
                 android:orientation="horizontal"
                 android:padding="8dp">
 
+                <!-- ✅ CÓDIGO DOS CARDS ADICIONADO AQUI ✅ -->
                 <com.google.android.material.card.MaterialCardView
                     style="@style/Widget.App.CardResumo"
                     android:layout_width="0dp"
@@ -106,6 +93,7 @@
                         <TextView android:id="@+id/text_view_lucro_jogo" style="@style/Widget.App.TextViewCardResumoValor" tools:text="R$ 350,00" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
             <!-- Abas e Conteúdo -->
@@ -113,25 +101,42 @@
                 android:id="@+id/tab_layout_detalhes_jogo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabMode="fixed"
-                app:tabGravity="fill"/>
+                app:tabGravity="fill"
+                app:tabMode="fixed" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager_detalhes_jogo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <!-- Altura pode precisar ser ajustada ou o NestedScrollView pode ter problemas com ViewPager2 de altura dinâmica -->
+                android:layout_height="400dp" /> <!-- Altura pode precisar de ajuste -->
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Botão de Deletar no fundo -->
+    <Button
+        android:id="@+id/button_deletar_jogo"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="256dp"
+        android:layout_height="52dp"
+        android:layout_margin="16dp"
+        android:text="Deletar Jogo"
+        android:textColor="@color/design_default_color_error"
+        app:icon="@drawable/ic_delete"
+        app:iconTint="@color/design_default_color_error"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@color/design_default_color_error" />
+
+    <!-- FAB para adicionar -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_detalhes_jogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="Adicionar" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

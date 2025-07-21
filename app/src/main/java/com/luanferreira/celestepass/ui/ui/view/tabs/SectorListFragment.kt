@@ -1,0 +1,45 @@
+package com.luanferreira.celestepass.ui.view.tabs
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.luanferreira.celestepass.databinding.FragmentListPlaceholderBinding
+import com.luanferreira.celestepass.ui.adapter.SectorAdapter
+import com.luanferreira.celestepass.ui.viewmodel.ManagementViewModel
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class SectorListFragment : Fragment() {
+    private var _binding: FragmentListPlaceholderBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: ManagementViewModel by viewModels()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentListPlaceholderBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val sectorAdapter = SectorAdapter { setor ->
+            AlertDialog.Builder(requireContext())
+                .setTitle("Deletar Setor")
+                .setMessage("Tem certeza que deseja deletar o setor '${setor.nome}'?")
+                .setPositiveButton("Deletar") { _, _ -> viewModel.deleteSetor(setor) }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+        binding.recyclerViewList.adapter = sectorAdapter
+        binding.recyclerViewList.layoutManager = LinearLayoutManager(context)
+
+        viewModel.allSetores.observe(viewLifecycleOwner) { setores ->
+            sectorAdapter.submitList(setores)
+        }
+    }
+    override fun onDestroyView() { super.onDestroyView(); _binding = null }
+}
