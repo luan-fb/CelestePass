@@ -7,6 +7,21 @@
     android:padding="16dp"
     tools:context=".ui.view.AddGameFragment">
 
+    <!-- ✅ CORREÇÃO: ImageView para o escudo do adversário, posicionado à esquerda -->
+    <ImageView
+        android:id="@+id/image_view_preview_escudo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="Escudo do adversário"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/input_layout_adversario"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/input_layout_adversario"
+        tools:src="@drawable/ic_shield"
+        tools:visibility="visible" />
+
+    <!-- ✅ CORREÇÃO: Campo de texto posicionado à direita do escudo -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_layout_adversario"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -14,7 +29,7 @@
         android:layout_height="wrap_content"
         android:hint="Selecione o Adversário"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image_view_preview_escudo"
         app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
@@ -25,28 +40,17 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageView
-        android:id="@+id/image_view_preview_escudo"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_layout_adversario"
-        tools:src="@drawable/ic_shield"
-        android:contentDescription="Preview do escudo do adversário"/>
-
+    <!-- ProgressBar para feedback de carregamento do escudo -->
     <ProgressBar
         android:id="@+id/progress_bar_escudo"
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@id/image_view_preview_escudo"
-        app:layout_constraintTop_toTopOf="@id/image_view_preview_escudo"
         app:layout_constraintBottom_toBottomOf="@id/image_view_preview_escudo"
-        android:layout_marginStart="8dp"/>
-
+        app:layout_constraintEnd_toEndOf="@id/image_view_preview_escudo"
+        app:layout_constraintStart_toStartOf="@id/image_view_preview_escudo"
+        app:layout_constraintTop_toTopOf="@id/image_view_preview_escudo" />
 
     <Button
         android:id="@+id/button_selecionar_data"
@@ -54,18 +58,21 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Selecionar Data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_view_preview_escudo" />
+        app:layout_constraintTop_toBottomOf="@+id/input_layout_adversario" />
 
     <TextView
         android:id="@+id/text_view_data_selecionada"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
         android:textAppearance="?attr/textAppearanceBodyLarge"
-        app:layout_constraintBottom_toBottomOf="@id/button_selecionar_data"
-        app:layout_constraintStart_toEndOf="@id/button_selecionar_data"
-        app:layout_constraintTop_toTopOf="@id/button_selecionar_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_selecionar_data"
         tools:text="31/05/2025" />
 
     <Button
