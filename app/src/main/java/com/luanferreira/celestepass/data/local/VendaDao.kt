@@ -25,5 +25,6 @@ interface VendaDao {
     @Query("SELECT * FROM vendas") // Placeholder, crie queries específicas
     fun getTodasAsVendas(): Flow<List<Venda>>
 
-
+    @Query("SELECT * FROM vendas")
+    fun getAllVendas(): Flow<List<Venda>>
 }

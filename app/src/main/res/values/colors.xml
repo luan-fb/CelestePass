@@ -4,6 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="cruzeiro_blue">#003F7E</color>
     <color name="cruzeiro_blue_dark">#002C5A</color>
+    <color name="light_gray_background">#F5F5F5</color>
+    <color name="success_green">#4CAF50</color>
 
 
 </resources>

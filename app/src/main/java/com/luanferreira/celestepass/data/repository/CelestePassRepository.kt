@@ -43,9 +43,13 @@ interface CelestePassRepository {
 
     suspend fun deleteSetor(setor: Setor)
 
+    suspend fun registarVenda(venda: Venda, ingressoDoLote: Ingresso)
 
+    fun getAllVendas(): Flow<List<Venda>>
 
+    fun getAllIngressos(): Flow<List<Ingresso>>
 
+    suspend fun marcarVendaComoEntregue(venda: Venda)
 
 
 

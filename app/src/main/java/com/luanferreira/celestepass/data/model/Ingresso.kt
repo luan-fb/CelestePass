@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-
 @Entity(
     tableName = "ingressos",
     foreignKeys = [
@@ -22,12 +21,13 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-class Ingresso(
+
+data class Ingresso(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val jogoId: Long,
     val setorId: Long,
     val quantidade: Int,
-    val valorCompra: Double
-             ) {
-}
+    val valorCompra: Double,
+    val quantidadeVendida: Int = 0
+)

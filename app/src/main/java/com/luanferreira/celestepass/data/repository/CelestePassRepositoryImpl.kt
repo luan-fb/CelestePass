@@ -1,5 +1,6 @@
 package com.luanferreira.celestepass.data.repository
 
+import androidx.room.Transaction
 import com.luanferreira.celestepass.data.local.*
 import com.luanferreira.celestepass.data.model.Cliente
 import com.luanferreira.celestepass.data.model.Ingresso
@@ -90,11 +91,25 @@ class CelestePassRepositoryImpl(
         setorDao.delete(setor)
     }
 
-
-
     override fun getClientes(): Flow<List<Cliente>> {
         return clienteDao.getAllClientes()
     }
 
+    @Transaction
+    override suspend fun registarVenda(venda: Venda, ingressoDoLote: Ingresso) {
+        vendaDao.insert(venda)
+        ingressoDao.update(ingressoDoLote)
+    }
 
+    override fun getAllVendas(): Flow<List<Venda>> {
+        return vendaDao.getAllVendas()
+    }
+
+    override fun getAllIngressos(): Flow<List<Ingresso>> {
+        return ingressoDao.getAllIngressos()
+    }
+
+    override suspend fun marcarVendaComoEntregue(venda: Venda) {
+        vendaDao.update(venda)
+    }
 }

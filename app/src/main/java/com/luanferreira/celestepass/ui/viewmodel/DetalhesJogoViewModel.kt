@@ -6,6 +6,7 @@ import com.luanferreira.celestepass.data.model.Jogo
 import com.luanferreira.celestepass.data.model.Venda
 import com.luanferreira.celestepass.data.repository.CelestePassRepository
 import com.luanferreira.celestepass.ui.adapter.IngressoComSetor
+import com.luanferreira.celestepass.ui.adapter.VendaDetalhada
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -13,7 +14,6 @@ import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
 
-// Data class para o resumo financeiro do jogo
 data class ResumoFinanceiroJogo(
     val investido: Double = 0.0,
     val vendido: Double = 0.0,
@@ -23,65 +23,16 @@ data class ResumoFinanceiroJogo(
 @HiltViewModel
 class DetalhesJogoViewModel @Inject constructor(
     private val repository: CelestePassRepository,
-    private val savedStateHandle: SavedStateHandle // Para pegar o jogoId dos argumentos de navegação
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val jogoId: Long = savedStateHandle.get<Long>("jogoId")!!
 
     val jogo: LiveData<Jogo?> = repository.getJogoPorId(jogoId).asLiveData()
 
-    // LiveData para avisar a UI que o jogo foi deletado
-    private val _jogoDeletadoEvento = MutableLiveData<Boolean>()
-    val jogoDeletadoEvento: LiveData<Boolean> get() = _jogoDeletadoEvento
-
-    // FUNÇÃO para deletar o jogo atual
-    fun deletarJogoAtual() {
-        // Pega o jogo atual que está sendo observado pelo LiveData
-        jogo.value?.let { jogoParaDeletar ->
-            viewModelScope.launch {
-                repository.deleteJogo(jogoParaDeletar)
-                // Avisa a UI que a operação foi concluída
-                _jogoDeletadoEvento.postValue(true)
-            }
-        }
-    }
-
-    // FUNÇÃO para resetar o evento após a navegação
-    fun onJogoDeletadoEventoCompleto() {
-        _jogoDeletadoEvento.value = false
-    }
-
     val ingressosComprados: LiveData<List<Ingresso>> = repository.getIngressosCompradosDoJogo(jogoId).asLiveData()
-    val vendasDoJogo: LiveData<List<Venda>> = repository.getVendasDoJogo(jogoId).asLiveData()
 
-    // LiveData para o resumo financeiro do jogo específico
-    val resumoFinanceiro: LiveData<ResumoFinanceiroJogo> =
-        MediatorLiveData<ResumoFinanceiroJogo>().apply {
-            // Observa as vendas e os ingressos comprados para recalcular o resumo
-            // Esta é uma lógica complexa que precisa ser bem pensada
-            // Por ora, vamos simplificar ou deixar para implementar depois
-            // Para calcular o investimento, precisamos dos valores de compra dos ingressos vendidos.
-            // Para calcular o valor vendido, pegamos das vendas.
-
-            // Exemplo muito simplificado e INCOMPLETO de cálculo
-            // A forma correta envolveria buscar os ingressos de cada venda para pegar o valorCompra
-            addSource(vendasDoJogo) { vendas ->
-                val vendido = vendas.sumOf { it.valorVendaUnitario * it.quantidadeVendida }
-                // O cálculo do investido aqui é um placeholder, pois precisaria dos dados dos ingressos
-                val investidoPlaceholder = vendas.sumOf { 10.0 * it.quantidadeVendida } // VALOR DE COMPRA FICTÍCIO
-                value = ResumoFinanceiroJogo(
-                    investido = investidoPlaceholder,
-                    vendido = vendido,
-                    lucro = vendido - investidoPlaceholder
-                )
-            }
-        }
-
-
-    fun formatarMoeda(valor: Double): String {
-        val formatoMoeda = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
-        return formatoMoeda.format(valor)
-    }
+    // ✅ CORREÇÃO: Adicionado de volta o LiveData que faltava
     val ingressosComSetor: LiveData<List<IngressoComSetor>> =
         repository.getIngressosCompradosDoJogo(jogoId)
             .combine(repository.getAllSetores()) { ingressos, setores ->
@@ -92,4 +43,81 @@ class DetalhesJogoViewModel @Inject constructor(
                     )
                 }
             }.asLiveData()
+
+    val vendasDetalhadas: LiveData<List<VendaDetalhada>> =
+        repository.getVendasDoJogo(jogoId)
+            .combine(repository.getIngressosCompradosDoJogo(jogoId)) { vendas, ingressos ->
+                Pair(vendas, ingressos)
+            }.combine(repository.getClientes()) { (vendas, ingressos), clientes ->
+                Triple(vendas, ingressos, clientes)
+            }.combine(repository.getAllSetores()) { (vendas, ingressos, clientes), setores ->
+                vendas.map { venda ->
+                    val ingressoAssociado = ingressos.find { it.id == venda.ingressoId }
+                    VendaDetalhada(
+                        venda = venda,
+                        cliente = clientes.find { it.id == venda.clienteId },
+                        ingresso = ingressoAssociado,
+                        setor = setores.find { it.id == ingressoAssociado?.setorId }
+                    )
+                }
+            }.asLiveData()
+
+    val resumoFinanceiro: LiveData<ResumoFinanceiroJogo> = MediatorLiveData<ResumoFinanceiroJogo>().apply {
+        var currentIngressos: List<Ingresso>? = null
+        var currentVendas: List<VendaDetalhada>? = null
+
+        fun update() {
+            val ingressos = currentIngressos
+            val vendas = currentVendas
+            if (ingressos != null && vendas != null) {
+                val investido = ingressos.sumOf { it.valorCompra * it.quantidade }
+                val vendido = vendas.sumOf { it.venda.valorVendaUnitario * it.venda.quantidadeVendida }
+                val custoDasVendas = vendas.sumOf { (it.ingresso?.valorCompra ?: 0.0) * it.venda.quantidadeVendida }
+                val lucro = vendido - custoDasVendas
+                value = ResumoFinanceiroJogo(investido = investido, vendido = vendido, lucro = lucro)
+            }
+        }
+
+        addSource(ingressosComprados) { ingressos ->
+            currentIngressos = ingressos
+            update()
+        }
+
+        addSource(vendasDetalhadas) { vendas ->
+            currentVendas = vendas
+            update()
+        }
+    }
+
+    private val _jogoDeletadoEvento = MutableLiveData<Boolean>()
+    val jogoDeletadoEvento: LiveData<Boolean> get() = _jogoDeletadoEvento
+
+    fun deletarJogoAtual() {
+        jogo.value?.let { jogoParaDeletar ->
+            viewModelScope.launch {
+                repository.deleteJogo(jogoParaDeletar)
+                _jogoDeletadoEvento.postValue(true)
+            }
+        }
+    }
+
+    fun onJogoDeletadoEventoCompleto() {
+        _jogoDeletadoEvento.value = false
+    }
+
+    fun formatarMoeda(valor: Double): String {
+        val formatoMoeda = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
+        return formatoMoeda.format(valor)
+    }
+
+
+    // ✅ NOVA FUNÇÃO para marcar uma venda como entregue
+    fun marcarVendaComoEntregue(venda: Venda) {
+        viewModelScope.launch {
+            val vendaAtualizada = venda.copy(entregue = true)
+            repository.marcarVendaComoEntregue(vendaAtualizada)
+        }
+    }
+
+
 }

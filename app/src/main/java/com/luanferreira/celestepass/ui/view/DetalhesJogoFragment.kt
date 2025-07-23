@@ -40,26 +40,16 @@ class DetalhesJogoFragment : Fragment() {
         setupViewPager()
         observeViewModel()
 
-        // AÇÃO DO FAB (a implementar)
-        binding.fabDetalhesJogo.setOnClickListener {
-            // A implementar no próximo passo do checklist
-        }
 
-        // Adiciona o listener para o botão de deletar
         binding.buttonDeletarJogo.setOnClickListener {
             mostrarDialogoDelecao()
         }
 
         binding.fabDetalhesJogo.setOnClickListener {
-            // ✅ NAVEGAÇÃO PARA A NOVA TELA
-            // Passa o ID do jogo atual como argumento
-            val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToAddTicketLotFragment(args.jogoId)
-            findNavController().navigate(action)
+            mostrarDialogoDeAcoes()
         }
 
-        binding.buttonDeletarJogo.setOnClickListener {
-            mostrarDialogoDelecao()
-        }
+
 
     }
 
@@ -79,6 +69,27 @@ class DetalhesJogoFragment : Fragment() {
             .create()
             .show()
     }
+
+    private fun mostrarDialogoDeAcoes() {
+        val opcoes = arrayOf("Adicionar Lote de Ingressos", "Registar Venda")
+        AlertDialog.Builder(requireContext())
+            .setTitle("O que deseja fazer?")
+            .setItems(opcoes) { dialog, which ->
+                when (which) {
+                    0 -> { // Adicionar Lote de Ingressos
+                        val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToAddTicketLotFragment(args.jogoId)
+                        findNavController().navigate(action)
+                    }
+                    1 -> { // Registar Venda
+                        val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToRegistarVendaFragment(args.jogoId)
+                        findNavController().navigate(action)
+                    }
+                }
+                dialog.dismiss()
+            }
+            .show()
+    }
+
 
     private fun setupViewPager() {
         binding.viewPagerDetalhesJogo.adapter = DetalhesJogoPagerAdapter(this, args.jogoId)

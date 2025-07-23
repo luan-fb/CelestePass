@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_detalhesJogoFragment_to_addTicketLotFragment"
             app:destination="@id/addTicketLotFragment" />
+        <action
+            android:id="@+id/action_detalhesJogoFragment_to_registarVendaFragment"
+            app:destination="@id/registarVendaFragment" />
     </fragment>
 
     <fragment
@@ -78,6 +81,16 @@
         <action
             android:id="@+id/action_managementFragment_to_addSetorFragment"
             app:destination="@id/addSetorFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registarVendaFragment"
+        android:name="com.luanferreira.celestepass.ui.view.RegistarVendaFragment"
+        android:label="Registar Venda"
+        tools:layout="@layout/fragment_registar_venda">
+        <argument
+            android:name="jogoId"
+            app:argType="long" />
     </fragment>
 
 </navigation>

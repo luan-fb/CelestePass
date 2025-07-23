@@ -5,31 +5,52 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels // Mude o import
-import com.luanferreira.celestepass.R
-import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel // Importe o ViewModel
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.luanferreira.celestepass.databinding.FragmentVendasJogoBinding // Use ViewBinding
+import com.luanferreira.celestepass.ui.adapter.VendaAdapter
+import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class VendasJogoFragment : Fragment() {
 
-    // ✅ CORREÇÃO: Usamos viewModels({ requireParentFragment() }) para partilhar
-    // o ViewModel com o DetalhesJogoFragment (o pai).
+    private var _binding: FragmentVendasJogoBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: DetalhesJogoViewModel by viewModels({ requireParentFragment() })
+    private val vendaAdapter = VendaAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Por agora, continuamos a usar o layout de placeholder.
-        // Futuramente, aqui teremos um RecyclerView para as vendas.
-        return inflater.inflate(R.layout.fragment_tab_placeholder, container, false)
+    ): View {
+        _binding = FragmentVendasJogoBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Aqui você pode observar os dados de vendas do viewModel
-        // viewModel.vendasDoJogo.observe(viewLifecycleOwner) { vendas -> ... }
+        setupRecyclerView()
+        observeViewModel()
+    }
+
+    private fun setupRecyclerView() {
+        binding.recyclerViewVendas.apply {
+            adapter = vendaAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.vendasDetalhadas.observe(viewLifecycleOwner) { listaVendas ->
+            vendaAdapter.submitList(listaVendas)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

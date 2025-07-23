@@ -5,35 +5,63 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels // Mude o import
-import com.luanferreira.celestepass.R
-import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel // Importe o ViewModel
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.luanferreira.celestepass.databinding.FragmentEntregasJogoBinding
+import com.luanferreira.celestepass.ui.adapter.EntregaAdapter
+import com.luanferreira.celestepass.ui.viewmodel.DetalhesJogoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class EntregasJogoFragment : Fragment() {
 
-    // ✅ CORREÇÃO: Usamos viewModels({ requireParentFragment() })
+    private var _binding: FragmentEntregasJogoBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: DetalhesJogoViewModel by viewModels({ requireParentFragment() })
+    private lateinit var entregaAdapter: EntregaAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_tab_placeholder, container, false)
+    ): View {
+        _binding = FragmentEntregasJogoBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Lógica futura para a aba de entregas
+        setupRecyclerView()
+        observeViewModel()
+    }
+
+    private fun setupRecyclerView() {
+        entregaAdapter = EntregaAdapter { vendaDetalhada ->
+            // Ação ao clicar no botão "Marcar como Entregue"
+            viewModel.marcarVendaComoEntregue(vendaDetalhada.venda)
+        }
+        binding.recyclerViewEntregas.apply {
+            adapter = entregaAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.vendasDetalhadas.observe(viewLifecycleOwner) { listaCompletaDeVendas ->
+            entregaAdapter.submitList(listaCompletaDeVendas)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
-        private const val ARG_JOGO_ID = "jogo_id"
         fun newInstance(jogoId: Long) =
             EntregasJogoFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(ARG_JOGO_ID, jogoId)
+                    putLong("jogo_id", jogoId)
                 }
             }
     }
