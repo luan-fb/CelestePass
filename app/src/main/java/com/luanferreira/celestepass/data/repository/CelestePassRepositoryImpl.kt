@@ -112,4 +112,17 @@ class CelestePassRepositoryImpl(
     override suspend fun marcarVendaComoEntregue(venda: Venda) {
         vendaDao.update(venda)
     }
+
+    override suspend fun deleteIngresso(ingresso: Ingresso) {
+        ingressoDao.delete(ingresso)
+    }
+
+    @Transaction
+    override suspend fun deleteVenda(venda: Venda, ingressoDoLote: Ingresso) {
+        // Primeiro, atualiza o lote de ingressos, devolvendo a quantidade
+        ingressoDao.update(ingressoDoLote)
+        // Depois, deleta o registo da venda
+        vendaDao.delete(venda)
+    }
+
 }

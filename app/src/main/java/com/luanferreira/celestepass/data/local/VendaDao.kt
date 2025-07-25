@@ -1,9 +1,11 @@
 package com.luanferreira.celestepass.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.luanferreira.celestepass.data.model.Ingresso
 import com.luanferreira.celestepass.data.model.Venda
 import kotlinx.coroutines.flow.Flow
 
@@ -27,4 +29,7 @@ interface VendaDao {
 
     @Query("SELECT * FROM vendas")
     fun getAllVendas(): Flow<List<Venda>>
+
+    @Delete
+    suspend fun delete(venda: Venda)
 }

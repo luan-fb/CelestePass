@@ -51,6 +51,10 @@ interface CelestePassRepository {
 
     suspend fun marcarVendaComoEntregue(venda: Venda)
 
+    suspend fun deleteIngresso(ingresso: Ingresso)
+
+    suspend fun deleteVenda(venda: Venda, ingressoDoLote: Ingresso)
+
 
 
 }

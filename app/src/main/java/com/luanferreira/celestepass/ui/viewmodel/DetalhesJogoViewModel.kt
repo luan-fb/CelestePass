@@ -1,5 +1,6 @@
 package com.luanferreira.celestepass.ui.viewmodel
 
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.luanferreira.celestepass.data.model.Ingresso
 import com.luanferreira.celestepass.data.model.Jogo
@@ -27,10 +28,13 @@ class DetalhesJogoViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val jogoId: Long = savedStateHandle.get<Long>("jogoId")!!
+    private val _eventoVendaNaoRemovida = MutableLiveData<Int>() // Posição na lista
+    val eventoVendaNaoRemovida: LiveData<Int> = _eventoVendaNaoRemovida
 
     val jogo: LiveData<Jogo?> = repository.getJogoPorId(jogoId).asLiveData()
 
-    val ingressosComprados: LiveData<List<Ingresso>> = repository.getIngressosCompradosDoJogo(jogoId).asLiveData()
+    val ingressosComprados: LiveData<List<Ingresso>> =
+        repository.getIngressosCompradosDoJogo(jogoId).asLiveData()
 
     // ✅ CORREÇÃO: Adicionado de volta o LiveData que faltava
     val ingressosComSetor: LiveData<List<IngressoComSetor>> =
@@ -62,32 +66,40 @@ class DetalhesJogoViewModel @Inject constructor(
                 }
             }.asLiveData()
 
-    val resumoFinanceiro: LiveData<ResumoFinanceiroJogo> = MediatorLiveData<ResumoFinanceiroJogo>().apply {
-        var currentIngressos: List<Ingresso>? = null
-        var currentVendas: List<VendaDetalhada>? = null
+    val resumoFinanceiro: LiveData<ResumoFinanceiroJogo> =
+        MediatorLiveData<ResumoFinanceiroJogo>().apply {
+            var currentIngressos: List<Ingresso>? = null
+            var currentVendas: List<VendaDetalhada>? = null
 
-        fun update() {
-            val ingressos = currentIngressos
-            val vendas = currentVendas
-            if (ingressos != null && vendas != null) {
-                val investido = ingressos.sumOf { it.valorCompra * it.quantidade }
-                val vendido = vendas.sumOf { it.venda.valorVendaUnitario * it.venda.quantidadeVendida }
-                val custoDasVendas = vendas.sumOf { (it.ingresso?.valorCompra ?: 0.0) * it.venda.quantidadeVendida }
-                val lucro = vendido - custoDasVendas
-                value = ResumoFinanceiroJogo(investido = investido, vendido = vendido, lucro = lucro)
+            fun update() {
+                val ingressos = currentIngressos
+                val vendas = currentVendas
+                if (ingressos != null && vendas != null) {
+                    val investido = ingressos.sumOf { it.valorCompra * it.quantidade }
+                    val vendido =
+                        vendas.sumOf { it.venda.valorVendaUnitario * it.venda.quantidadeVendida }
+                    val custoDasVendas = vendas.sumOf {
+                        (it.ingresso?.valorCompra ?: 0.0) * it.venda.quantidadeVendida
+                    }
+                    val lucro = vendido - custoDasVendas
+                    value = ResumoFinanceiroJogo(
+                        investido = investido,
+                        vendido = vendido,
+                        lucro = lucro
+                    )
+                }
+            }
+
+            addSource(ingressosComprados) { ingressos ->
+                currentIngressos = ingressos
+                update()
+            }
+
+            addSource(vendasDetalhadas) { vendas ->
+                currentVendas = vendas
+                update()
             }
         }
-
-        addSource(ingressosComprados) { ingressos ->
-            currentIngressos = ingressos
-            update()
-        }
-
-        addSource(vendasDetalhadas) { vendas ->
-            currentVendas = vendas
-            update()
-        }
-    }
 
     private val _jogoDeletadoEvento = MutableLiveData<Boolean>()
     val jogoDeletadoEvento: LiveData<Boolean> get() = _jogoDeletadoEvento
@@ -101,6 +113,24 @@ class DetalhesJogoViewModel @Inject constructor(
         }
     }
 
+    fun deleteVenda(vendaDetalhada: VendaDetalhada,posicao: Int) {
+        val vendaParaDeletar = vendaDetalhada.venda
+        val ingressoDoLote = vendaDetalhada.ingresso
+
+        if (ingressoDoLote == null) return
+        if (vendaParaDeletar.entregue) {
+            _eventoVendaNaoRemovida.postValue(posicao)
+            return
+        }
+
+        val loteAtualizado = ingressoDoLote.copy(
+            quantidadeVendida = ingressoDoLote.quantidadeVendida - vendaParaDeletar.quantidadeVendida
+        )
+        viewModelScope.launch {
+            repository.deleteVenda(vendaParaDeletar, loteAtualizado)
+        }
+    }
+
     fun onJogoDeletadoEventoCompleto() {
         _jogoDeletadoEvento.value = false
     }
@@ -111,7 +141,6 @@ class DetalhesJogoViewModel @Inject constructor(
     }
 
 
-    // ✅ NOVA FUNÇÃO para marcar uma venda como entregue
     fun marcarVendaComoEntregue(venda: Venda) {
         viewModelScope.launch {
             val vendaAtualizada = venda.copy(entregue = true)
@@ -119,5 +148,11 @@ class DetalhesJogoViewModel @Inject constructor(
         }
     }
 
+    fun deleteIngresso(ingresso: Ingresso) {
+        viewModelScope.launch {
+            repository.deleteIngresso(ingresso)
+        }
 
+
+    }
 }
