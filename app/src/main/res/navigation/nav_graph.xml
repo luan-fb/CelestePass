@@ -17,12 +17,6 @@
             android:id="@+id/action_dashboardFragment_to_detalhesJogoFragment"
             app:destination="@id/detalhesJogoFragment" />
         <action
-            android:id="@+id/action_dashboardFragment_to_addSetorFragment"
-            app:destination="@id/addSetorFragment" />
-        <action
-            android:id="@+id/action_dashboardFragment_to_addClienteFragment"
-            app:destination="@id/addClienteFragment" />
-        <action
             android:id="@+id/action_dashboardFragment_to_managementFragment"
             app:destination="@id/managementFragment" />
     </fragment>
@@ -64,11 +58,17 @@
         android:name="com.luanferreira.celestepass.ui.view.AddSetorFragment"
         android:label="Cadastrar Novo Setor"
         tools:layout="@layout/fragment_add_setor" />
+
     <fragment
         android:id="@+id/addClienteFragment"
         android:name="com.luanferreira.celestepass.ui.view.AddClienteFragment"
-        android:label="Cadastrar Novo Cliente"
-        tools:layout="@layout/fragment_add_cliente" />
+        android:label="Cadastrar Cliente"
+        tools:layout="@layout/fragment_add_cliente">
+        <argument
+            android:name="clienteId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
 
     <fragment
         android:id="@+id/managementFragment"
@@ -81,6 +81,9 @@
         <action
             android:id="@+id/action_managementFragment_to_addSetorFragment"
             app:destination="@id/addSetorFragment" />
+        <action
+            android:id="@+id/action_managementFragment_to_clienteDetalhesFragment"
+            app:destination="@id/clienteDetalhesFragment" />
     </fragment>
 
     <fragment
@@ -91,6 +94,19 @@
         <argument
             android:name="jogoId"
             app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/clienteDetalhesFragment"
+        android:name="com.luanferreira.celestepass.ui.view.ClienteDetalhesFragment"
+        android:label="Detalhes do Cliente"
+        tools:layout="@layout/fragment_cliente_detalhes">
+        <argument
+            android:name="clienteId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_clienteDetalhesFragment_to_addClienteFragment"
+            app:destination="@id/addClienteFragment" />
     </fragment>
 
 </navigation>

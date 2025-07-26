@@ -22,13 +22,18 @@
         tools:visibility="visible" />
 
     <!-- ✅ CORREÇÃO: Campo de texto posicionado à direita do escudo -->
+
+    <!-- ProgressBar para feedback de carregamento do escudo -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_layout_adversario"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="180dp"
         android:hint="Selecione o Adversário"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/image_view_preview_escudo"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -40,7 +45,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- ProgressBar para feedback de carregamento do escudo -->
     <ProgressBar
         android:id="@+id/progress_bar_escudo"
         style="?android:attr/progressBarStyleSmall"
@@ -56,7 +60,7 @@
         android:id="@+id/button_selecionar_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="Selecionar Data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -67,7 +71,7 @@
         android:id="@+id/text_view_data_selecionada"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
         android:textAppearance="?attr/textAppearanceBodyLarge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

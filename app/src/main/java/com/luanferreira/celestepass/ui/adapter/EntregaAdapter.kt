@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.luanferreira.celestepass.R
+import com.luanferreira.celestepass.data.model.Venda
 import com.luanferreira.celestepass.databinding.ItemEntregaPendenteBinding
 
 class EntregaAdapter(
-    private val onMarcarEntregueClicked: (VendaDetalhada) -> Unit
+    private val onActionClicked: (venda: VendaDetalhada, isEntregue: Boolean) -> Unit
 ) : ListAdapter<VendaDetalhada, EntregaAdapter.EntregaViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntregaViewHolder {
@@ -21,40 +22,42 @@ class EntregaAdapter(
     }
 
     override fun onBindViewHolder(holder: EntregaViewHolder, position: Int) {
-        holder.bind(getItem(position), onMarcarEntregueClicked)
+        holder.bind(getItem(position), onActionClicked)
     }
 
     class EntregaViewHolder(private val binding: ItemEntregaPendenteBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(vendaDetalhada: VendaDetalhada, onMarcarEntregueClicked: (VendaDetalhada) -> Unit) {
+        fun bind(vendaDetalhada: VendaDetalhada, onActionClicked: (VendaDetalhada, Boolean) -> Unit) {
             binding.textViewClienteInfoEntrega.text = "Entregar para: ${vendaDetalhada.cliente?.nome ?: "N/A"}"
             binding.textViewIngressoInfoEntrega.text = "${vendaDetalhada.venda.quantidadeVendida}x - ${vendaDetalhada.setor?.nome ?: "N/A"}"
 
+            val button = binding.buttonMarcarEntregue
+
             if (vendaDetalhada.venda.entregue) {
-                // ✅ ESTADO ENTREGUE
-                binding.buttonMarcarEntregue.text = "Entregue"
-                binding.buttonMarcarEntregue.isEnabled = false
-
-                // Define a cor do ícone para verde
+                // ESTADO ENTREGUE
+                button.text = "Desmarcar"
+                button.isEnabled = true
                 val successColor = ContextCompat.getColor(itemView.context, R.color.success_green)
-                binding.buttonMarcarEntregue.setIconTint(ColorStateList.valueOf(successColor)) // ✅ CORREÇÃO
+                button.iconTint = ColorStateList.valueOf(successColor)
 
-                // Muda a cor de fundo do card para um cinzento claro
                 val backgroundColor = ContextCompat.getColor(itemView.context, R.color.light_gray_background)
                 binding.cardViewEntrega.setCardBackgroundColor(backgroundColor)
 
-            } else {
-                // ✅ ESTADO PENDENTE
-                binding.buttonMarcarEntregue.text = "Marcar como Entregue"
-                binding.buttonMarcarEntregue.isEnabled = true
-                binding.buttonMarcarEntregue.setIconTint(null) // ✅ CORREÇÃO: Reseta para a cor padrão do tema
+                button.setOnClickListener {
+                    onActionClicked(vendaDetalhada, true) // Ação para desmarcar
+                }
 
-                // Garante que a cor de fundo volta ao normal (cor de superfície do tema)
+            } else {
+                // ESTADO PENDENTE
+                button.text = "Marcar como Entregue"
+                button.isEnabled = true
+                button.iconTint = null // Cor padrão do tema
+
                 val typedValue = TypedValue()
                 itemView.context.theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
                 binding.cardViewEntrega.setCardBackgroundColor(typedValue.data)
 
-                binding.buttonMarcarEntregue.setOnClickListener {
-                    onMarcarEntregueClicked(vendaDetalhada)
+                button.setOnClickListener {
+                    onActionClicked(vendaDetalhada, false) // Ação para marcar
                 }
             }
         }

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.luanferreira.celestepass.data.model.Cliente
 import kotlinx.coroutines.flow.Flow
 
@@ -17,5 +18,11 @@ interface ClienteDao {
 
     @Delete
     suspend fun delete(cliente: Cliente)
+
+    @Update
+    suspend fun update(cliente: Cliente)
+
+    @Query("SELECT * FROM clientes WHERE id = :clienteId")
+    fun getClienteById(clienteId: Long): Flow<Cliente?>
 
 }

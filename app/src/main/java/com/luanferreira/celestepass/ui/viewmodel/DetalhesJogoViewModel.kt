@@ -28,15 +28,19 @@ class DetalhesJogoViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val jogoId: Long = savedStateHandle.get<Long>("jogoId")!!
+
     private val _eventoVendaNaoRemovida = MutableLiveData<Int>() // Posição na lista
+
     val eventoVendaNaoRemovida: LiveData<Int> = _eventoVendaNaoRemovida
 
     val jogo: LiveData<Jogo?> = repository.getJogoPorId(jogoId).asLiveData()
 
+    private val _errorEvent = MutableLiveData<String?>()
+    val errorEvent: LiveData<String?> get() = _errorEvent
+
     val ingressosComprados: LiveData<List<Ingresso>> =
         repository.getIngressosCompradosDoJogo(jogoId).asLiveData()
 
-    // ✅ CORREÇÃO: Adicionado de volta o LiveData que faltava
     val ingressosComSetor: LiveData<List<IngressoComSetor>> =
         repository.getIngressosCompradosDoJogo(jogoId)
             .combine(repository.getAllSetores()) { ingressos, setores ->
@@ -65,6 +69,7 @@ class DetalhesJogoViewModel @Inject constructor(
                     )
                 }
             }.asLiveData()
+
 
     val resumoFinanceiro: LiveData<ResumoFinanceiroJogo> =
         MediatorLiveData<ResumoFinanceiroJogo>().apply {
@@ -104,11 +109,18 @@ class DetalhesJogoViewModel @Inject constructor(
     private val _jogoDeletadoEvento = MutableLiveData<Boolean>()
     val jogoDeletadoEvento: LiveData<Boolean> get() = _jogoDeletadoEvento
 
+
     fun deletarJogoAtual() {
         jogo.value?.let { jogoParaDeletar ->
             viewModelScope.launch {
-                repository.deleteJogo(jogoParaDeletar)
-                _jogoDeletadoEvento.postValue(true)
+                // ✅ VERIFICAÇÃO: Checa se o jogo tem ingressos antes de deletar
+                if (repository.getIngressosCountForJogo(jogoParaDeletar.id) > 0) {
+                    _errorEvent.postValue("Este jogo não pode ser deletado pois possui lotes de ingressos cadastrados. Remova os ingressos primeiro.")
+                } else {
+                    // Se não houver ingressos, procede com a deleção
+                    repository.deleteJogo(jogoParaDeletar)
+                    _jogoDeletadoEvento.postValue(true)
+                }
             }
         }
     }
@@ -148,11 +160,22 @@ class DetalhesJogoViewModel @Inject constructor(
         }
     }
 
+    fun desmarcarVendaComoEntregue(venda: Venda) {
+        viewModelScope.launch {
+            val vendaAtualizada = venda.copy(entregue = false)
+            repository.marcarVendaComoEntregue(vendaAtualizada) // Reutilizamos a mesma função do repositório
+        }
+    }
+
+
     fun deleteIngresso(ingresso: Ingresso) {
         viewModelScope.launch {
             repository.deleteIngresso(ingresso)
         }
-
-
     }
+
+    fun onErrorEventConsumed() {
+        _errorEvent.value = null
+    }
+
 }

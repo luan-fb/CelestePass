@@ -123,6 +123,24 @@ class CelestePassRepositoryImpl(
         ingressoDao.update(ingressoDoLote)
         // Depois, deleta o registo da venda
         vendaDao.delete(venda)
+
+
+    }
+
+    override suspend fun getIngressosCountForJogo(jogoId: Long): Int {
+        return ingressoDao.getIngressosCountByJogoId(jogoId)
+    }
+
+    override suspend fun updateCliente(cliente: Cliente) {
+        clienteDao.update(cliente)
+    }
+
+    override fun getClienteById(clienteId: Long): Flow<Cliente?> {
+        return clienteDao.getClienteById(clienteId)
+    }
+
+    override fun getVendasDoCliente(clienteId: Long): Flow<List<Venda>> {
+        return vendaDao.getVendasByClienteId(clienteId)
     }
 
 }

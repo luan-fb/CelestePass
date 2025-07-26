@@ -127,6 +127,20 @@ class DetalhesJogoFragment : Fragment() {
                 viewModel.onJogoDeletadoEventoCompleto()
             }
         }
+
+        viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                // Mostra um diálogo de alerta com a mensagem de erro
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Ação não permitida")
+                    .setMessage(it)
+                    .setPositiveButton("Ok", null)
+                    .show()
+                // Avisa o ViewModel que a mensagem já foi mostrada
+                viewModel.onErrorEventConsumed()
+            }
+        }
+
     }
 
     override fun onDestroyView() {

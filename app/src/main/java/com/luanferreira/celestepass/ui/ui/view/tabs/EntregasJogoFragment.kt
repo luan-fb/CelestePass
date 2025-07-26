@@ -36,9 +36,14 @@ class EntregasJogoFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        entregaAdapter = EntregaAdapter { vendaDetalhada ->
-            // Ação ao clicar no botão "Marcar como Entregue"
-            viewModel.marcarVendaComoEntregue(vendaDetalhada.venda)
+        entregaAdapter = EntregaAdapter { vendaDetalhada, isEntregue ->
+            if (isEntregue) {
+                // Se já está entregue, a ação é desmarcar
+                viewModel.desmarcarVendaComoEntregue(vendaDetalhada.venda)
+            } else {
+                // Se está pendente, a ação é marcar como entregue
+                viewModel.marcarVendaComoEntregue(vendaDetalhada.venda)
+            }
         }
         binding.recyclerViewEntregas.apply {
             adapter = entregaAdapter

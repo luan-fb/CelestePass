@@ -55,6 +55,12 @@ interface CelestePassRepository {
 
     suspend fun deleteVenda(venda: Venda, ingressoDoLote: Ingresso)
 
+    suspend fun updateCliente(cliente: Cliente)
 
+    fun getClienteById(clienteId: Long): Flow<Cliente?>
+
+    fun getVendasDoCliente(clienteId: Long): Flow<List<Venda>>
+
+    suspend fun getIngressosCountForJogo(jogoId: Long): Int
 
 }

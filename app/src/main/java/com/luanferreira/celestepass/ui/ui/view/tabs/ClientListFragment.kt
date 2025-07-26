@@ -1,5 +1,6 @@
 package com.luanferreira.celestepass.ui.view.tabs
 
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +8,11 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luanferreira.celestepass.databinding.FragmentListPlaceholderBinding
 import com.luanferreira.celestepass.ui.adapter.ClientAdapter
+import com.luanferreira.celestepass.ui.view.ManagementFragmentDirections
 import com.luanferreira.celestepass.ui.viewmodel.ManagementViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,19 +29,41 @@ class ClientListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val clientAdapter = ClientAdapter { cliente ->
-            AlertDialog.Builder(requireContext())
-                .setTitle("Deletar Cliente")
-                .setMessage("Tem certeza que deseja deletar o cliente '${cliente.nome}'?")
-                .setPositiveButton("Deletar") { _, _ -> viewModel.deleteCliente(cliente) }
-                .setNegativeButton("Cancelar", null)
-                .show()
-        }
+
+        // ✅ CORREÇÃO: Fornece as duas ações para o adapter
+        val clientAdapter = ClientAdapter(
+            onItemClicked = { cliente ->
+                // Ação de clique: Navega para a tela de detalhes
+                val action = ManagementFragmentDirections.actionManagementFragmentToClienteDetalhesFragment(cliente.id)
+                findNavController().navigate(action)
+            },
+            onDeleteClicked = { cliente ->
+                // Ação de deletar: Mostra o diálogo de confirmação
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Deletar Cliente")
+                    .setMessage("Tem certeza que deseja deletar o cliente '${cliente.nome}'?")
+                    .setPositiveButton("Deletar") { _, _ -> viewModel.deleteCliente(cliente) }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
+        )
+
         binding.recyclerViewList.adapter = clientAdapter
         binding.recyclerViewList.layoutManager = LinearLayoutManager(context)
 
         viewModel.allClientes.observe(viewLifecycleOwner) { clientes ->
             clientAdapter.submitList(clientes)
+        }
+
+        viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Ação não permitida")
+                    .setMessage(it)
+                    .setPositiveButton("Ok", null)
+                    .show()
+                viewModel.onErrorEventConsumed()
+            }
         }
     }
     override fun onDestroyView() { super.onDestroyView(); _binding = null }

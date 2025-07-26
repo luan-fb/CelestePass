@@ -10,25 +10,42 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddClienteViewModel @Inject constructor(
-    private val repository: CelestePassRepository
-) : ViewModel() { // ✅ CORREÇÃO: Adicionado : ViewModel()
+    private val repository: CelestePassRepository,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    private val clienteId: Long = savedStateHandle.get<Long>("clienteId") ?: -1L
+
+    val clienteParaEdicao: LiveData<Cliente?> = if (clienteId != -1L) {
+        repository.getClienteById(clienteId).asLiveData()
+    } else {
+        MutableLiveData(null)
+    }
+
+    // ✅ CORREÇÃO: Nomes consistentes para o evento
     private val _clienteSalvoEvento = MutableLiveData<Boolean>()
     val clienteSalvoEvento: LiveData<Boolean> get() = _clienteSalvoEvento
 
     fun salvarCliente(nome: String, cpf: String?, email: String?, telefone: String?, dataNascimento: Date?) {
         if (nome.isBlank()) return
-        val novoCliente = Cliente(
-            nome = nome,
-            cpf = cpf,
-            email = email,
-            telefone = telefone,
-            dataNascimento = dataNascimento
-        )
+
         viewModelScope.launch {
-            repository.insertCliente(novoCliente)
+            if (clienteId == -1L) {
+                // MODO ADICIONAR
+                val novoCliente = Cliente(nome = nome, cpf = cpf, email = email, telefone = telefone, dataNascimento = dataNascimento)
+                repository.insertCliente(novoCliente)
+            } else {
+                // MODO EDITAR
+                val clienteAtualizado = Cliente(id = clienteId, nome = nome, cpf = cpf, email = email, telefone = telefone, dataNascimento = dataNascimento)
+                repository.updateCliente(clienteAtualizado)
+            }
             _clienteSalvoEvento.postValue(true)
         }
     }
 
-    fun onClienteSalvoEventoCompleto() { _clienteSalvoEvento.value = false }
+    // ✅ CORREÇÃO: Função de reset correspondente ao evento
+    fun onClienteSalvoEventoCompleto() {
+        _clienteSalvoEvento.value = false
+    }
 }
+

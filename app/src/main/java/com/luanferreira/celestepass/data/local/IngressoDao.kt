@@ -24,4 +24,7 @@ interface IngressoDao {
 
     @Delete
     suspend fun delete(ingresso: Ingresso)
+
+    @Query("SELECT COUNT(*) FROM ingressos WHERE jogoId = :jogoId")
+    suspend fun getIngressosCountByJogoId(jogoId: Long): Int
 }

@@ -32,4 +32,7 @@ interface VendaDao {
 
     @Delete
     suspend fun delete(venda: Venda)
+
+    @Query("SELECT * FROM vendas WHERE clienteId = :clienteId") // Corrigido para buscar vendas, não o count
+    fun getVendasByClienteId(clienteId: Long): Flow<List<Venda>>
 }
