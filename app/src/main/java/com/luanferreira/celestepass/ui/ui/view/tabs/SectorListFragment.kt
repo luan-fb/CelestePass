@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.luanferreira.celestepass.databinding.FragmentListPlaceholderBinding
 import com.luanferreira.celestepass.ui.adapter.SectorAdapter
+import com.luanferreira.celestepass.ui.view.ManagementFragmentDirections
 import com.luanferreira.celestepass.ui.viewmodel.ManagementViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class SectorListFragment : Fragment() {
     private var _binding: FragmentListPlaceholderBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ManagementViewModel by viewModels()
+    private val viewModel: ManagementViewModel by viewModels({ requireParentFragment() })
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListPlaceholderBinding.inflate(inflater, container, false)
@@ -26,14 +28,25 @@ class SectorListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val sectorAdapter = SectorAdapter { setor ->
-            AlertDialog.Builder(requireContext())
-                .setTitle("Deletar Setor")
-                .setMessage("Tem certeza que deseja deletar o setor '${setor.nome}'?")
-                .setPositiveButton("Deletar") { _, _ -> viewModel.deleteSetor(setor) }
-                .setNegativeButton("Cancelar", null)
-                .show()
-        }
+
+        // ✅ CORREÇÃO: Fornece as duas ações para o adapter
+        val sectorAdapter = SectorAdapter(
+            onItemClicked = { setor ->
+                // Ação de clique: Navega para a tela de edição, passando o ID do setor
+                val action = ManagementFragmentDirections.actionManagementFragmentToAddSetorFragment(setor.id)
+                findNavController().navigate(action)
+            },
+            onDeleteClicked = { setor ->
+                // Ação de deletar: Mostra o diálogo de confirmação
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Deletar Setor")
+                    .setMessage("Tem certeza que deseja deletar o setor '${setor.nome}'?")
+                    .setPositiveButton("Deletar") { _, _ -> viewModel.deleteSetor(setor) }
+                    .setNegativeButton("Cancelar", null)
+                    .show()
+            }
+        )
+
         binding.recyclerViewList.adapter = sectorAdapter
         binding.recyclerViewList.layoutManager = LinearLayoutManager(context)
 

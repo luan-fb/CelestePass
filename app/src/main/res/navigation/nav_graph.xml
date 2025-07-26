@@ -56,8 +56,13 @@
     <fragment
         android:id="@+id/addSetorFragment"
         android:name="com.luanferreira.celestepass.ui.view.AddSetorFragment"
-        android:label="Cadastrar Novo Setor"
-        tools:layout="@layout/fragment_add_setor" />
+        android:label="Setor"
+    tools:layout="@layout/fragment_add_setor">
+    <argument
+        android:name="setorId"
+        app:argType="long"
+        android:defaultValue="-1L" />
+</fragment>
 
     <fragment
         android:id="@+id/addClienteFragment"

@@ -63,4 +63,8 @@ interface CelestePassRepository {
 
     suspend fun getIngressosCountForJogo(jogoId: Long): Int
 
+    suspend fun updateSetor(setor: Setor)
+
+    fun getSetorById(setorId: Long): Flow<Setor?>
+
 }

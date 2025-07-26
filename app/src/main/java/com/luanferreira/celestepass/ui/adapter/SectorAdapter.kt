@@ -9,17 +9,21 @@ import com.luanferreira.celestepass.data.model.Setor
 import com.luanferreira.celestepass.databinding.ItemManagementBinding
 
 class SectorAdapter(
+    private val onItemClicked: (Setor) -> Unit,
     private val onDeleteClicked: (Setor) -> Unit
 ) : ListAdapter<Setor, SectorAdapter.SectorViewHolder>(DiffCallback) {
+
+    override fun onBindViewHolder(holder: SectorViewHolder, position: Int) {
+        val setor = getItem(position)
+        holder.itemView.setOnClickListener { onItemClicked(setor) }
+        holder.bind(setor, onDeleteClicked)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SectorViewHolder {
         val binding = ItemManagementBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return SectorViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SectorViewHolder, position: Int) {
-        holder.bind(getItem(position), onDeleteClicked)
-    }
 
     class SectorViewHolder(private val binding: ItemManagementBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(setor: Setor, onDeleteClicked: (Setor) -> Unit) {

@@ -4,80 +4,83 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLowest"
     tools:context=".ui.view.ClienteDetalhesFragment">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text_view_nome_cliente_detalhes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline4"
-            tools:text="Nome Completo do Cliente" />
-
-        <com.google.android.material.divider.MaterialDivider
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <!-- ✅ NOVOS CAMPOS PARA EXIBIR OS DETALHES -->
-        <TextView
-            style="@style/TextAppearance.Material3.TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CPF" />
-        <TextView
-            android:id="@+id/text_view_cpf_detalhes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            tools:text="123.456.789-00" />
+            <!-- Card do Nome -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="2dp">
 
-        <TextView
-            style="@style/TextAppearance.Material3.TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="E-mail" />
-        <TextView
-            android:id="@+id/text_view_email_detalhes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            tools:text="cliente@email.com" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="20dp">
 
-        <TextView
-            style="@style/TextAppearance.Material3.TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Telefone" />
-        <TextView
-            android:id="@+id/text_view_telefone_detalhes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            tools:text="(31) 99999-9999" />
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_person"
+                        app:tint="?attr/colorPrimary"
+                        android:contentDescription="Ícone de cliente"/>
 
-        <TextView
-            style="@style/TextAppearance.Material3.TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Data de Nascimento" />
-        <TextView
-            android:id="@+id/text_view_data_nascimento_detalhes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            tools:text="21/07/1990" />
+                    <TextView
+                        android:id="@+id/text_view_nome_cliente_detalhes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textAppearance="?attr/textAppearanceHeadline5"
+                        tools:text="Nome do Cliente" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-    </LinearLayout>
+            <!-- Card de Informações -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- CPF -->
+                    <include layout="@layout/item_detalhe_info"
+                        android:id="@+id/layout_cpf"/>
+
+                    <!-- Email -->
+                    <include layout="@layout/item_detalhe_info"
+                        android:id="@+id/layout_email"/>
+
+                    <!-- Telefone -->
+                    <include layout="@layout/item_detalhe_info"
+                        android:id="@+id/layout_telefone"/>
+
+                    <!-- Data de Nascimento -->
+                    <include layout="@layout/item_detalhe_info"
+                        android:id="@+id/layout_data_nascimento"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_editar_cliente"
