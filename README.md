@@ -20,7 +20,7 @@
 
 ## 🖼️ Telas do aplicativo
 
-<img src="screenshots/splash_screen.png" width="300"> <img src="screenshots/cadastro.png" width="300"> <img src="screenshots/detalhes_jogo.png" width="300">
+<img src="screenshots/splash_screen.png" width="200"> <img src="screenshots/cadastro.png" width="200"> <img src="screenshots/detalhes_jogo.png" width="200">
 
 ---
 
