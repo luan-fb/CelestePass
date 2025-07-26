@@ -1,13 +1,16 @@
 package com.luanferreira.celestepass.ui.view
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.load
 import com.google.android.material.tabs.TabLayoutMediator
 import com.luanferreira.celestepass.R
 import com.luanferreira.celestepass.databinding.FragmentDetalhesJogoBinding
@@ -26,10 +29,7 @@ class DetalhesJogoFragment : Fragment() {
     private val viewModel: DetalhesJogoViewModel by viewModels()
     private val args: DetalhesJogoFragmentArgs by navArgs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDetalhesJogoBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -40,34 +40,73 @@ class DetalhesJogoFragment : Fragment() {
         setupViewPager()
         observeViewModel()
 
-
-        binding.buttonDeletarJogo.setOnClickListener {
-            mostrarDialogoDelecao()
-        }
-
         binding.fabDetalhesJogo.setOnClickListener {
             mostrarDialogoDeAcoes()
         }
-
-
-
     }
 
-    // A função para mostrar o diálogo de confirmação permanece a mesma
-    private fun mostrarDialogoDelecao() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Confirmar Exclusão")
-            .setMessage("Tem certeza de que deseja deletar este jogo? Esta ação não pode ser desfeita.")
-            .setIcon(R.drawable.ic_delete)
-            .setPositiveButton("Deletar") { dialog, _ ->
-                viewModel.deletarJogoAtual()
-                dialog.dismiss()
+    private fun setupViewPager() {
+        binding.viewPagerDetalhesJogo.adapter = DetalhesJogoPagerAdapter(this, args.jogoId)
+        TabLayoutMediator(binding.tabLayoutDetalhesJogo, binding.viewPagerDetalhesJogo) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Vendas"
+                1 -> "Ingressos"
+                2 -> "Entregas"
+                else -> null
             }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
+        }.attach()
+    }
+
+    private fun observeViewModel() {
+        viewModel.jogo.observe(viewLifecycleOwner) { jogo ->
+            jogo?.let {
+                val formatadorData = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                binding.textViewNomeJogoDetalhes.text = "Cruzeiro vs. ${it.adversarioNome} - ${formatadorData.format(it.data)}"
+
+                binding.imageViewAdversarioLogo.load(it.adversarioEscudoUrl) {
+                    placeholder(R.drawable.ic_shield)
+                    error(R.drawable.ic_broken_image)
+                }
             }
-            .create()
-            .show()
+        }
+
+        viewModel.resumoFinanceiro.observe(viewLifecycleOwner) { resumo ->
+            resumo?.let {
+                // Card Investido
+                binding.cardInvestido.textViewCardTitle.text = "Investido"
+                binding.cardInvestido.imageViewCardIcon.setImageResource(R.drawable.ic_investment)
+                binding.cardInvestido.textViewCardValue.text = viewModel.formatarMoeda(it.investido)
+
+                // Card Vendido
+                binding.cardVendido.textViewCardTitle.text = "Vendido"
+                binding.cardVendido.imageViewCardIcon.setImageResource(R.drawable.ic_revenue)
+                binding.cardVendido.textViewCardValue.text = viewModel.formatarMoeda(it.vendido)
+
+                // Card Lucro
+                binding.cardLucro.textViewCardTitle.text = "Lucro"
+                binding.cardLucro.imageViewCardIcon.setImageResource(R.drawable.ic_profit)
+                binding.cardLucro.textViewCardValue.text = viewModel.formatarMoeda(it.lucro)
+            }
+        }
+
+        viewModel.jogoDeletadoEvento.observe(viewLifecycleOwner) { foiDeletado ->
+            if (foiDeletado == true) {
+                Toast.makeText(context, "Jogo deletado com sucesso!", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+                viewModel.onJogoDeletadoEventoCompleto()
+            }
+        }
+
+        viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
+            errorMessage?.let {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Ação não permitida")
+                    .setMessage(it)
+                    .setPositiveButton("Ok", null)
+                    .show()
+                viewModel.onErrorEventConsumed()
+            }
+        }
     }
 
     private fun mostrarDialogoDeAcoes() {
@@ -90,57 +129,22 @@ class DetalhesJogoFragment : Fragment() {
             .show()
     }
 
-
-    private fun setupViewPager() {
-        binding.viewPagerDetalhesJogo.adapter = DetalhesJogoPagerAdapter(this, args.jogoId)
-        TabLayoutMediator(binding.tabLayoutDetalhesJogo, binding.viewPagerDetalhesJogo) { tab, position ->
-            tab.text = when (position) {
-                0 -> "Vendas"
-                1 -> "Ingressos"
-                2 -> "Entregas"
-                else -> null
+    // A lógica de deleção ainda existe, mas não está ligada a um botão no novo layout.
+    // Poderíamos adicionar um ícone de lixeira no cabeçalho no futuro.
+    private fun mostrarDialogoDelecao() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar Exclusão")
+            .setMessage("Tem certeza de que deseja deletar este jogo? Esta ação não pode ser desfeita.")
+            .setIcon(R.drawable.ic_delete)
+            .setPositiveButton("Deletar") { dialog, _ ->
+                viewModel.deletarJogoAtual()
+                dialog.dismiss()
             }
-        }.attach()
-    }
-
-    private fun observeViewModel() {
-        viewModel.jogo.observe(viewLifecycleOwner) { jogo ->
-            jogo?.let {
-                val formatadorData = SimpleDateFormat("dd 'de' MMMM 'de' yyyy", Locale("pt", "BR"))
-                binding.textViewNomeJogoDetalhes.text = "Cruzeiro vs. ${it.adversarioNome}"
-                binding.textViewDataJogoDetalhes.text = formatadorData.format(it.data)
+            .setNegativeButton("Cancelar") { dialog, _ ->
+                dialog.dismiss()
             }
-        }
-
-        viewModel.resumoFinanceiro.observe(viewLifecycleOwner) { resumo ->
-            resumo?.let {
-                binding.textViewInvestidoJogo.text = viewModel.formatarMoeda(it.investido)
-                binding.textViewVendidoJogo.text = viewModel.formatarMoeda(it.vendido)
-                binding.textViewLucroJogo.text = viewModel.formatarMoeda(it.lucro)
-            }
-        }
-
-        viewModel.jogoDeletadoEvento.observe(viewLifecycleOwner) { foiDeletado ->
-            if (foiDeletado == true) {
-                Toast.makeText(context, "Jogo deletado com sucesso!", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
-                viewModel.onJogoDeletadoEventoCompleto()
-            }
-        }
-
-        viewModel.errorEvent.observe(viewLifecycleOwner) { errorMessage ->
-            errorMessage?.let {
-                // Mostra um diálogo de alerta com a mensagem de erro
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Ação não permitida")
-                    .setMessage(it)
-                    .setPositiveButton("Ok", null)
-                    .show()
-                // Avisa o ViewModel que a mensagem já foi mostrada
-                viewModel.onErrorEventConsumed()
-            }
-        }
-
+            .create()
+            .show()
     }
 
     override fun onDestroyView() {

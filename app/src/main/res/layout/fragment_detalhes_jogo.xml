@@ -1,142 +1,140 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorSurfaceContainerLowest"
     tools:context=".ui.view.DetalhesJogoFragment">
 
-    <!-- Cabeçalho com informações do jogo -->
-    <LinearLayout
-        android:id="@+id/header_layout_detalhes"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/text_view_nome_jogo_detalhes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            android:textColor="@android:color/white"
-            tools:text="Cruzeiro vs. Flamengo" />
-
-        <TextView
-            android:id="@+id/text_view_data_jogo_detalhes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            android:textColor="@android:color/white"
-            tools:text="31 de Maio de 2025" />
-    </LinearLayout>
-
-    <!-- Conteúdo principal com scroll -->
     <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header_layout_detalhes"
-        app:layout_constraintBottom_toTopOf="@id/button_deletar_jogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
+
+            <!-- Cabeçalho Azul -->
+            <View
+                android:id="@+id/header_background"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/guideline_header_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <ImageView
+                android:id="@+id/image_view_cruzeiro_logo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_cruzeiro_logo_placeholder"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/text_view_resumo_title"
+                android:contentDescription="Escudo do Cruzeiro"/>
+
+            <TextView
+                android:id="@+id/text_view_nome_jogo_detalhes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@id/image_view_cruzeiro_logo"
+                app:layout_constraintEnd_toStartOf="@id/image_view_adversario_logo"
+                app:layout_constraintTop_toTopOf="@id/image_view_cruzeiro_logo"
+                app:layout_constraintBottom_toBottomOf="@id/image_view_cruzeiro_logo"
+                tools:text="Cruzeiro vs. Flamengo - 31/05/2025"/>
+
+            <ImageView
+                android:id="@+id/image_view_adversario_logo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/image_view_cruzeiro_logo"
+                app:layout_constraintBottom_toBottomOf="@id/image_view_cruzeiro_logo"
+                android:contentDescription="Escudo do Adversário"/>
+
+            <TextView
+                android:id="@+id/text_view_resumo_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Resumo"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image_view_cruzeiro_logo" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_header_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="160dp"/>
 
             <!-- Cards de Resumo -->
             <LinearLayout
-                android:id="@+id/layout_cards_resumo_jogo"
-                android:layout_width="match_parent"
+                android:id="@+id/layout_cards_resumo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:paddingHorizontal="12dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/text_view_resumo_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- ✅ CÓDIGO DOS CARDS ADICIONADO AQUI ✅ -->
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/Widget.App.CardResumo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="4dp">
-                    <LinearLayout style="@style/Widget.App.LinearLayoutCardResumo">
-                        <TextView style="@style/Widget.App.TextViewCardResumoTitulo" android:text="Investido" />
-                        <TextView android:id="@+id/text_view_investido_jogo" style="@style/Widget.App.TextViewCardResumoValor" tools:text="R$ 500,00" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/Widget.App.CardResumo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp">
-                    <LinearLayout style="@style/Widget.App.LinearLayoutCardResumo">
-                        <TextView style="@style/Widget.App.TextViewCardResumoTitulo" android:text="Vendido" />
-                        <TextView android:id="@+id/text_view_vendido_jogo" style="@style/Widget.App.TextViewCardResumoValor" tools:text="R$ 850,00" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/Widget.App.CardResumo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="4dp">
-                    <LinearLayout style="@style/Widget.App.LinearLayoutCardResumo">
-                        <TextView style="@style/Widget.App.TextViewCardResumoTitulo" android:text="Lucro" />
-                        <TextView android:id="@+id/text_view_lucro_jogo" style="@style/Widget.App.TextViewCardResumoValor" tools:text="R$ 350,00" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
+                <!-- Card Investido -->
+                <include layout="@layout/item_card_resumo" android:id="@+id/card_investido"/>
+                <!-- Card Vendido -->
+                <include layout="@layout/item_card_resumo" android:id="@+id/card_vendido"/>
+                <!-- Card Lucro -->
+                <include layout="@layout/item_card_resumo" android:id="@+id/card_lucro"/>
             </LinearLayout>
 
-            <!-- Abas e Conteúdo -->
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout_detalhes_jogo"
-                android:layout_width="match_parent"
+            <!-- Conteúdo Principal (Abas) -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:tabGravity="fill"
-                app:tabMode="fixed" />
+                android:layout_marginTop="100dp"
+                android:background="@drawable/background_rounded_top"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/guideline_header_end">
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/view_pager_detalhes_jogo"
-                android:layout_width="match_parent"
-                android:layout_height="400dp" /> <!-- Altura pode precisar de ajuste -->
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout_detalhes_jogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabGravity="fill"
+                    app:tabMode="fixed" />
 
-        </LinearLayout>
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/view_pager_detalhes_jogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp" /> <!-- Altura ajustável -->
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Botão de Deletar no fundo -->
-    <Button
-        android:id="@+id/button_deletar_jogo"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="256dp"
-        android:layout_height="52dp"
-        android:layout_margin="16dp"
-        android:text="Deletar Jogo"
-        android:textColor="@color/design_default_color_error"
-        app:icon="@drawable/ic_delete"
-        app:iconTint="@color/design_default_color_error"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/design_default_color_error" />
-
-    <!-- FAB para adicionar -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_detalhes_jogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="Adicionar" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
