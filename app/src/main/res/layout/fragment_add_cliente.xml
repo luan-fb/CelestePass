@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ui.view.AddClienteFragment">
+    tools:context=".ui.view.AdicionarClienteFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_layout_nome_cliente"

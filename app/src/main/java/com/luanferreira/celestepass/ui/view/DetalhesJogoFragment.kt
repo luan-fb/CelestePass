@@ -25,7 +25,6 @@ class DetalhesJogoFragment : Fragment() {
 
     private var _binding: FragmentDetalhesJogoBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel: DetalhesJogoViewModel by viewModels()
     private val args: DetalhesJogoFragmentArgs by navArgs()
 
@@ -109,13 +108,14 @@ class DetalhesJogoFragment : Fragment() {
         }
     }
 
-    private fun mostrarDialogoDeAcoes() {
+    private fun mostrarDialogoDeAcoes()
+    {
         val opcoes = arrayOf("Adicionar Lote de Ingressos", "Registar Venda")
         AlertDialog.Builder(requireContext())
             .setTitle("O que deseja fazer?")
             .setItems(opcoes) { dialog, which ->
                 when (which) {
-                    0 -> { // Adicionar Lote de Ingressos
+                    0 -> {
                         val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToAddTicketLotFragment(args.jogoId)
                         findNavController().navigate(action)
                     }
@@ -131,7 +131,8 @@ class DetalhesJogoFragment : Fragment() {
 
     // A lógica de deleção ainda existe, mas não está ligada a um botão no novo layout.
     // Poderíamos adicionar um ícone de lixeira no cabeçalho no futuro.
-    private fun mostrarDialogoDelecao() {
+    private fun mostrarDialogoDelecao()
+    {
         AlertDialog.Builder(requireContext())
             .setTitle("Confirmar Exclusão")
             .setMessage("Tem certeza de que deseja deletar este jogo? Esta ação não pode ser desfeita.")
@@ -147,7 +148,8 @@ class DetalhesJogoFragment : Fragment() {
             .show()
     }
 
-    override fun onDestroyView() {
+    override fun onDestroyView()
+    {
         super.onDestroyView()
         _binding = null
     }

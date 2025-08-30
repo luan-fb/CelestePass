@@ -9,6 +9,6 @@ data class Jogo(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val adversarioNome: String,
-    val adversarioEscudoUrl: String?, // Pode ser nulo se a API falhar ou não tiver escudo
+    val adversarioEscudoUrl: String?,
     val data: Date
 )

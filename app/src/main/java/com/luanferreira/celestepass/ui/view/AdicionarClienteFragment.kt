@@ -12,16 +12,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.luanferreira.celestepass.databinding.FragmentAddClienteBinding
-import com.luanferreira.celestepass.ui.viewmodel.AddClienteViewModel
+import com.luanferreira.celestepass.ui.viewmodel.AdicionarClienteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class AddClienteFragment : Fragment() {
+class AdicionarClienteFragment : Fragment() {
     private var _binding: FragmentAddClienteBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AddClienteViewModel by viewModels()
+    private val viewModel: AdicionarClienteViewModel by viewModels()
     private val args: AddClienteFragmentArgs by navArgs()
     private var dataNascimentoSelecionada: Date? = null
 

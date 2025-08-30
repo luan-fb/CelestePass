@@ -11,14 +11,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.luanferreira.celestepass.databinding.FragmentAddSetorBinding
-import com.luanferreira.celestepass.ui.viewmodel.AddSetorViewModel
+import com.luanferreira.celestepass.ui.viewmodel.AdicionarSetorViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddSetorFragment : Fragment() {
+class AdicionarSetorFragment : Fragment() {
     private var _binding: FragmentAddSetorBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AddSetorViewModel by viewModels()
+    private val viewModel: AdicionarSetorViewModel by viewModels()
     private val args: AddSetorFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

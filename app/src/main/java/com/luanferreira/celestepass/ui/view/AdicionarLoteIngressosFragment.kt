@@ -13,16 +13,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.luanferreira.celestepass.data.model.Setor
 import com.luanferreira.celestepass.databinding.FragmentAddTicketLotBinding
-import com.luanferreira.celestepass.ui.viewmodel.AddTicketLotViewModel
+import com.luanferreira.celestepass.ui.viewmodel.AdicionarLoteIngressoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddTicketLotFragment : Fragment() {
+class AdicionarLoteIngressosFragment : Fragment() {
 
     private var _binding: FragmentAddTicketLotBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: AddTicketLotViewModel by viewModels()
+    private val viewModel: AdicionarLoteIngressoViewModel by viewModels()
     private val args: AddTicketLotFragmentArgs by navArgs()
 
     private var setorSelecionado: Setor? = null

@@ -21,6 +21,8 @@ interface CelestePassRepository {
 
     fun getJogoPorId(jogoId: Long): Flow<Jogo?>
 
+    suspend fun updateJogo(jogo: Jogo)
+
     fun getVendasDoMes(): Flow<List<Venda>>
 
     fun getVendasDoAno(): Flow<List<Venda>>
@@ -66,5 +68,6 @@ interface CelestePassRepository {
     suspend fun updateSetor(setor: Setor)
 
     fun getSetorById(setorId: Long): Flow<Setor?>
+
 
 }

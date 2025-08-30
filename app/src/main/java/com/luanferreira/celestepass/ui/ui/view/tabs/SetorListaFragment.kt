@@ -16,7 +16,7 @@ import com.luanferreira.celestepass.ui.viewmodel.ManagementViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SectorListFragment : Fragment() {
+class SetorListaFragment : Fragment() {
     private var _binding: FragmentListPlaceholderBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ManagementViewModel by viewModels({ requireParentFragment() })

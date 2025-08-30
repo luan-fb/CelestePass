@@ -15,12 +15,10 @@ class ManagementViewModel @Inject constructor(
 ) : ViewModel() {
     val allClientes: LiveData<List<Cliente>> = repository.getClientes().asLiveData()
     val allSetores: LiveData<List<Setor>> = repository.getAllSetores().asLiveData()
-
     private val _errorEvent = MutableLiveData<String?>()
     val errorEvent: LiveData<String?> get() = _errorEvent
 
     fun deleteCliente(cliente: Cliente) = viewModelScope.launch {
-        // ✅ CORREÇÃO: Usa a nova função do repositório
         val vendasDoCliente = repository.getVendasDoCliente(cliente.id).first()
         if (vendasDoCliente.isNotEmpty()) {
             _errorEvent.postValue("Este cliente não pode ser deletado pois possui vendas associadas.")
@@ -28,12 +26,10 @@ class ManagementViewModel @Inject constructor(
             repository.deleteCliente(cliente)
         }
     }
-
     fun deleteSetor(setor: Setor) = viewModelScope.launch {
         // Futuramente, podemos adicionar uma verificação similar para setores
         repository.deleteSetor(setor)
     }
-
     fun onErrorEventConsumed() {
         _errorEvent.value = null
     }

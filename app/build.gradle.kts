@@ -25,6 +25,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 
     buildTypes {
@@ -43,31 +44,23 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    composeOptions{
+        kotlinCompilerExtensionVersion = "1.5.15" // Verifique a versão compatível
+    }
 }
 
 dependencies {
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    // Core Android KTX
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-
-    // Firebase BoM
-    val firebaseBomVersion = "33.1.1"
-   // implementation(platform("com.google.firebase:firebase-bom:$firebaseBomVersion"))
-
-    // Firebase
-    //implementation("com.google.firebase:firebase-firestore")
-    //implementation("com.google.firebase:firebase-messaging")
-    //implementation("com.google.firebase:firebase-auth")
+    // Lifecycle
+    val lifecycleVersion = "2.8.1"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
+    implementation("androidx.fragment:fragment-ktx:1.8.0")
 
     // Room
     val roomVersion = "2.6.1"
@@ -75,32 +68,50 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
 
-    // ViewModel & LiveData
-    val lifecycleVersion = "2.8.1"
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
-    implementation("androidx.fragment:fragment-ktx:1.8.0")
-
-
     // Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-compiler:2.51.1")
 
-    // Navigation Component
+    // Navigation Component (XML + Fragments)
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
-
-    // Retrofit para chamadas de API
-    implementation("com.squareup.retrofit2:retrofit:2.9.0") // Ou a versão mais recente
-    // Conversor Gson para Retrofit (para interpretar o JSON da API)
+    // Retrofit & Networking
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // Coil para carregar imagens (escudos)
-    implementation("io.coil-kt:coil:2.6.0") // Verifique a versão mais recente
+    // Coil (Image Loading)
+    implementation("io.coil-kt:coil:2.6.0")
+    implementation("io.coil-kt:coil-compose:2.6.0") // Adicionar para Compose
 
-    // OkHttp Logging Interceptor (para depurar chamadas de API, muito útil!)
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") // Verifique a versão a versão
+    // --- JETPACK COMPOSE DEPENDENCIES ---
+    val composeBom = platform("androidx.compose:compose-bom:2024.02.01")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Material Design 3
+    implementation("androidx.compose.material3:material3")
+
+    // Android Studio Previews
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // UI Tests
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Integração com outros componentes
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.compose.runtime:runtime-livedata") // Para .observeAsState()
+
+    // Testes
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     
 

@@ -43,15 +43,11 @@ class DashboardFragment : Fragment() {
             mostrarDialogoDeAcoesFab()
         }
 
-
-        // Configurar listener para clique no item do jogo (para ir para detalhes)
         adapter.onItemClickListener = { jogo ->
-            // ✅ NAVEGAÇÃO PARA DETALHES DO JOGO COM O ID ✅
             val action = DashboardFragmentDirections.actionDashboardFragmentToDetalhesJogoFragment(jogo.id)
             findNavController().navigate(action)
         }
     }
-
     private fun setupRecyclerView() {
         binding.recyclerViewJogos.layoutManager = LinearLayoutManager(context)
         binding.recyclerViewJogos.adapter = adapter

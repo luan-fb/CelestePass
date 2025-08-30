@@ -9,7 +9,7 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class AddClienteViewModel @Inject constructor(
+class AdicionarClienteViewModel @Inject constructor(
     private val repository: CelestePassRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {

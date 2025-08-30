@@ -22,27 +22,23 @@ data class ResumoFinanceiroJogo(
 )
 
 @HiltViewModel
-class DetalhesJogoViewModel @Inject constructor(
-    private val repository: CelestePassRepository,
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
-
+class DetalhesJogoViewModel @Inject constructor
+    (private val repository: CelestePassRepository, savedStateHandle: SavedStateHandle) : ViewModel() {
     private val jogoId: Long = savedStateHandle.get<Long>("jogoId")!!
 
     private val _eventoVendaNaoRemovida = MutableLiveData<Int>() // Posição na lista
-
     val eventoVendaNaoRemovida: LiveData<Int> = _eventoVendaNaoRemovida
 
     val jogo: LiveData<Jogo?> = repository.getJogoPorId(jogoId).asLiveData()
 
     private val _errorEvent = MutableLiveData<String?>()
     val errorEvent: LiveData<String?> get() = _errorEvent
+    private val _jogoDeletadoEvento = MutableLiveData<Boolean>()
+    val jogoDeletadoEvento: LiveData<Boolean> get() = _jogoDeletadoEvento
 
-    val ingressosComprados: LiveData<List<Ingresso>> =
-        repository.getIngressosCompradosDoJogo(jogoId).asLiveData()
+    val ingressosComprados: LiveData<List<Ingresso>> = repository.getIngressosCompradosDoJogo(jogoId).asLiveData()
 
-    val ingressosComSetor: LiveData<List<IngressoComSetor>> =
-        repository.getIngressosCompradosDoJogo(jogoId)
+    val ingressosComSetor: LiveData<List<IngressoComSetor>> = repository.getIngressosCompradosDoJogo(jogoId)
             .combine(repository.getAllSetores()) { ingressos, setores ->
                 ingressos.map { ingresso ->
                     IngressoComSetor(
@@ -52,15 +48,13 @@ class DetalhesJogoViewModel @Inject constructor(
                 }
             }.asLiveData()
 
-    val vendasDetalhadas: LiveData<List<VendaDetalhada>> =
-        repository.getVendasDoJogo(jogoId)
+    val vendasDetalhadas: LiveData<List<VendaDetalhada>> = repository.getVendasDoJogo(jogoId)
             .combine(repository.getIngressosCompradosDoJogo(jogoId)) { vendas, ingressos ->
                 Pair(vendas, ingressos)
             }.combine(repository.getClientes()) { (vendas, ingressos), clientes ->
                 Triple(vendas, ingressos, clientes)
             }.combine(repository.getAllSetores()) { (vendas, ingressos, clientes), setores ->
-                vendas.map { venda ->
-                    val ingressoAssociado = ingressos.find { it.id == venda.ingressoId }
+                vendas.map { venda -> val ingressoAssociado = ingressos.find { it.id == venda.ingressoId }
                     VendaDetalhada(
                         venda = venda,
                         cliente = clientes.find { it.id == venda.clienteId },
@@ -69,7 +63,6 @@ class DetalhesJogoViewModel @Inject constructor(
                     )
                 }
             }.asLiveData()
-
 
     val resumoFinanceiro: LiveData<ResumoFinanceiroJogo> =
         MediatorLiveData<ResumoFinanceiroJogo>().apply {
@@ -94,7 +87,6 @@ class DetalhesJogoViewModel @Inject constructor(
                     )
                 }
             }
-
             addSource(ingressosComprados) { ingressos ->
                 currentIngressos = ingressos
                 update()
@@ -106,18 +98,12 @@ class DetalhesJogoViewModel @Inject constructor(
             }
         }
 
-    private val _jogoDeletadoEvento = MutableLiveData<Boolean>()
-    val jogoDeletadoEvento: LiveData<Boolean> get() = _jogoDeletadoEvento
-
-
     fun deletarJogoAtual() {
         jogo.value?.let { jogoParaDeletar ->
             viewModelScope.launch {
-                // ✅ VERIFICAÇÃO: Checa se o jogo tem ingressos antes de deletar
                 if (repository.getIngressosCountForJogo(jogoParaDeletar.id) > 0) {
                     _errorEvent.postValue("Este jogo não pode ser deletado pois possui lotes de ingressos cadastrados. Remova os ingressos primeiro.")
                 } else {
-                    // Se não houver ingressos, procede com a deleção
                     repository.deleteJogo(jogoParaDeletar)
                     _jogoDeletadoEvento.postValue(true)
                 }
@@ -166,7 +152,6 @@ class DetalhesJogoViewModel @Inject constructor(
             repository.marcarVendaComoEntregue(vendaAtualizada) // Reutilizamos a mesma função do repositório
         }
     }
-
 
     fun deleteIngresso(ingresso: Ingresso) {
         viewModelScope.launch {

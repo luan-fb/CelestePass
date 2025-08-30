@@ -33,7 +33,7 @@ class CelestePassRepositoryImpl(
     }
 
     override suspend fun deleteJogo(jogo: Jogo) {
-        jogoDao.delete(jogo)
+        jogoDao.deleteJogo(jogo)
     }
 
     override suspend fun getEscudoDoTimePelaApi(timeId: Int): Response<TimeCrestResponse> {
@@ -51,6 +51,10 @@ class CelestePassRepositoryImpl(
         // Lógica para buscar vendas do ano atual usando vendaDao
         return vendaDao.getTodasAsVendas() // Substitua por uma query real
 
+    }
+
+    override suspend fun updateJogo(jogo: Jogo) {
+        jogoDao.updateJogo(jogo)
     }
 
     override fun getJogoPorId(jogoId: Long): Flow<Jogo?> {

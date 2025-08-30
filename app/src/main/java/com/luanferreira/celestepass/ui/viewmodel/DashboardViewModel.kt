@@ -57,7 +57,6 @@ class DashboardViewModel @Inject constructor(
                 anoVenda == anoAtual && mesVenda == mesAtual
             }
         }
-
         // 2. Calcula o lucro total para as vendas filtradas
         var lucroTotal = 0.0
         for (venda in vendasFiltradas) {
@@ -69,7 +68,6 @@ class DashboardViewModel @Inject constructor(
         }
         return lucroTotal
     }
-
     private fun formatarMoeda(valor: Double): String {
         val formatoMoeda = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
         return formatoMoeda.format(valor)

@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddSetorViewModel @Inject constructor(
+class AdicionarSetorViewModel @Inject constructor(
     private val repository: CelestePassRepository,
     savedStateHandle: SavedStateHandle // Adiciona o SavedStateHandle
 ) : ViewModel() {

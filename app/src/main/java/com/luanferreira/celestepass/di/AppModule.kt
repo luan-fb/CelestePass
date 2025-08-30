@@ -44,15 +44,14 @@ object AppModule {
     @Singleton
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // Loga o corpo das requisições/respostas
+            level = HttpLoggingInterceptor.Level.BODY
         }
     }
-
     @Provides
     @Singleton
     fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor) // Adiciona o interceptor para logs da API
+            .addInterceptor(loggingInterceptor)
             .build()
     }
 
@@ -60,8 +59,8 @@ object AppModule {
     @Singleton
     fun provideApiService(okHttpClient: OkHttpClient): ApiService {
         return Retrofit.Builder()
-            .baseUrl(API_BASE_URL) // Usa a constante da URL base
-            .client(okHttpClient) // Usa o OkHttpClient configurado
+            .baseUrl(API_BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(ApiService::class.java)
@@ -69,17 +68,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCelestePassRepository(
-        db: AppDatabase,
-        apiService: ApiService // Injeta a ApiService
-    ): CelestePassRepository {
+    fun provideCelestePassRepository(db: AppDatabase, apiService: ApiService): CelestePassRepository {
         return CelestePassRepositoryImpl(
             jogoDao = db.jogoDao(),
             setorDao = db.setorDao(),
             clienteDao = db.clienteDao(),
             ingressoDao = db.ingressoDao(),
             vendaDao = db.vendaDao(),
-            apiService = apiService // Passa a ApiService para a implementação
+            apiService = apiService
         )
     }
 }

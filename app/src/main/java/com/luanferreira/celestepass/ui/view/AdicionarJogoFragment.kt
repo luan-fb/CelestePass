@@ -17,18 +17,18 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.luanferreira.celestepass.R
 import com.luanferreira.celestepass.data.TimeSelecao
 import com.luanferreira.celestepass.databinding.FragmentAddGameBinding
-import com.luanferreira.celestepass.ui.viewmodel.AddGameViewModel
+import com.luanferreira.celestepass.ui.viewmodel.AdicionarJogoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class AddGameFragment : Fragment() {
+class AdicionarJogoFragment : Fragment() {
 
     private var _binding: FragmentAddGameBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: AddGameViewModel by viewModels()
+    private val viewModel: AdicionarJogoViewModel by viewModels()
     private var dataSelecionada: Date? = null
     private var timeAdversarioSelecionado: TimeSelecao? = null
     private var urlEscudoAdversarioAtual: String? = null

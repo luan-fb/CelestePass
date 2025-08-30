@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.luanferreira.celestepass.data.model.Cliente
 import com.luanferreira.celestepass.databinding.FragmentRegistarVendaBinding
 import com.luanferreira.celestepass.ui.adapter.IngressoComSetor
-import com.luanferreira.celestepass.ui.viewmodel.RegistarVendaViewModel
+import com.luanferreira.celestepass.ui.viewmodel.RegistrarVendaViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,7 +22,7 @@ class RegistarVendaFragment : Fragment() {
     private var _binding: FragmentRegistarVendaBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: RegistarVendaViewModel by viewModels()
+    private val viewModel: RegistrarVendaViewModel by viewModels()
 
     private var loteSelecionado: IngressoComSetor? = null
     private var clienteSelecionado: Cliente? = null

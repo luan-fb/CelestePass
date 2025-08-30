@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/addGameFragment"
-        android:name="com.luanferreira.celestepass.ui.view.AddGameFragment"
+        android:name="com.luanferreira.celestepass.ui.view.AdicionarJogoFragment"
         android:label="Adicionar Novo Jogo"
         tools:layout="@layout/fragment_add_game" />
 
@@ -45,7 +45,7 @@
 
     <fragment
         android:id="@+id/addTicketLotFragment"
-        android:name="com.luanferreira.celestepass.ui.view.AddTicketLotFragment"
+        android:name="com.luanferreira.celestepass.ui.view.AdicionarLoteIngressosFragment"
         android:label="Adicionar Lote de Ingressos"
         tools:layout="@layout/fragment_add_ticket_lot">
         <argument
@@ -55,7 +55,7 @@
 
     <fragment
         android:id="@+id/addSetorFragment"
-        android:name="com.luanferreira.celestepass.ui.view.AddSetorFragment"
+        android:name="com.luanferreira.celestepass.ui.view.AdicionarSetorFragment"
         android:label="Setor"
     tools:layout="@layout/fragment_add_setor">
     <argument
@@ -66,7 +66,7 @@
 
     <fragment
         android:id="@+id/addClienteFragment"
-        android:name="com.luanferreira.celestepass.ui.view.AddClienteFragment"
+        android:name="com.luanferreira.celestepass.ui.view.AdicionarClienteFragment"
         android:label="Cadastrar Cliente"
         tools:layout="@layout/fragment_add_cliente">
         <argument

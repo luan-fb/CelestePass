@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.luanferreira.celestepass.data.model.Jogo
 import kotlinx.coroutines.flow.Flow
 
@@ -16,10 +17,14 @@ interface JogoDao {
     fun getAllJogos(): Flow<List<Jogo>>
 
     @Query("SELECT * FROM jogos WHERE id = :jogoId")
-    fun getJogoPorId(jogoId: Long): Flow<Jogo?> // Retorna Flow para observação
+    fun getJogoPorId(jogoId: Long): Flow<Jogo?>
 
     @Delete
-    suspend fun delete(jogo: Jogo)
+    suspend fun deleteJogo(jogo: Jogo)
+
+    @Update
+    suspend fun updateJogo(jogo: Jogo)
+
 
 
 }

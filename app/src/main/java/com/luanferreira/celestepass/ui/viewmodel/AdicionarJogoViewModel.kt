@@ -15,7 +15,7 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class AddGameViewModel @Inject constructor(
+class AdicionarJogoViewModel @Inject constructor(
     private val repository: CelestePassRepository
 ) : ViewModel() {
 
@@ -28,7 +28,6 @@ class AddGameViewModel @Inject constructor(
     private val _isLoadingEscudo = MutableLiveData<Boolean>()
     val isLoadingEscudo: LiveData<Boolean> get() = _isLoadingEscudo
 
-    // Para notificar a UI que o jogo foi salvo e pode navegar de volta
     private val _jogoSalvoEvento = MutableLiveData<Boolean>()
     val jogoSalvoEvento: LiveData<Boolean> get() = _jogoSalvoEvento
 
@@ -42,7 +41,7 @@ class AddGameViewModel @Inject constructor(
 
     fun buscarEscudoAdversario(timeSelecionado: TimeSelecao) {
         _isLoadingEscudo.value = true
-        _escudoUrlResult.value = null // Limpa resultado anterior
+        _escudoUrlResult.value = null
         viewModelScope.launch {
             try {
                 Log.d("AddGameViewModel", "Buscando escudo para ID: ${timeSelecionado.idApi}")
@@ -65,7 +64,6 @@ class AddGameViewModel @Inject constructor(
 
     fun salvarJogo(nomeAdversario: String, escudoUrl: String?, data: Date) {
         if (nomeAdversario.isBlank()) {
-            // Idealmente, emitir um evento de erro para a UI
             Log.w("AddGameViewModel", "Tentativa de salvar jogo com nome de adversário em branco.")
             return
         }
