@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_dashboard" >
         <action
             android:id="@+id/action_dashboardFragment_to_addGameFragment"
-            app:destination="@id/addGameFragment" />
+            app:destination="@id/adicionarJogoFragment" />
         <action
             android:id="@+id/action_dashboardFragment_to_detalhesJogoFragment"
             app:destination="@id/detalhesJogoFragment" />
@@ -22,10 +22,15 @@
     </fragment>
 
     <fragment
-        android:id="@+id/addGameFragment"
+        android:id="@+id/adicionarJogoFragment"
         android:name="com.luanferreira.celestepass.ui.view.AdicionarJogoFragment"
-        android:label="Adicionar Novo Jogo"
-        tools:layout="@layout/fragment_add_game" />
+        android:label="Adicionar Jogo"
+        tools:layout="@layout/fragment_adicionar_jogo">
+        <argument
+            android:name="jogoId"
+            app:argType="long"
+            android:defaultValue="-1L" /> <!-- O valor padrão -1L indica o modo "Adicionar" -->
+    </fragment>
 
     <fragment
         android:id="@+id/detalhesJogoFragment"
@@ -41,13 +46,16 @@
         <action
             android:id="@+id/action_detalhesJogoFragment_to_registarVendaFragment"
             app:destination="@id/registarVendaFragment" />
+        <action
+            android:id="@+id/action_detalhesJogoFragment_to_addGameFragment"
+            app:destination="@id/adicionarJogoFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/addTicketLotFragment"
         android:name="com.luanferreira.celestepass.ui.view.AdicionarLoteIngressosFragment"
         android:label="Adicionar Lote de Ingressos"
-        tools:layout="@layout/fragment_add_ticket_lot">
+        tools:layout="@layout/fragment_adicionar_lote_ingresso">
         <argument
             android:name="jogoId"
             app:argType="long" />
@@ -57,7 +65,7 @@
         android:id="@+id/addSetorFragment"
         android:name="com.luanferreira.celestepass.ui.view.AdicionarSetorFragment"
         android:label="Setor"
-    tools:layout="@layout/fragment_add_setor">
+    tools:layout="@layout/fragment_adicionar_setor">
     <argument
         android:name="setorId"
         app:argType="long"
@@ -68,7 +76,7 @@
         android:id="@+id/addClienteFragment"
         android:name="com.luanferreira.celestepass.ui.view.AdicionarClienteFragment"
         android:label="Cadastrar Cliente"
-        tools:layout="@layout/fragment_add_cliente">
+        tools:layout="@layout/fragment_adicionar_cliente">
         <argument
             android:name="clienteId"
             app:argType="long"

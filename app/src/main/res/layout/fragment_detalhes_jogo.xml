@@ -122,7 +122,7 @@
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/view_pager_detalhes_jogo"
                     android:layout_width="match_parent"
-                    android:layout_height="500dp" /> <!-- Altura ajustável -->
+                    android:layout_height="500dp" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

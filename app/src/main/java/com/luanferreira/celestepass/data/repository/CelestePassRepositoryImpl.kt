@@ -40,17 +40,12 @@ class CelestePassRepositoryImpl(
         return apiService.getTeamDetails(FOOTBALL_DATA_AUTH_TOKEN, timeId)
     }
 
-    // EXEMPLO SIMPLES - A LÓGICA REAL SERÁ MAIS COMPLEXA E USARÁ OS DAOs
     override fun getVendasDoMes(): Flow<List<Venda>> {
-        // Lógica para buscar vendas do mês atual usando vendaDao
-        // Exemplo muito simplificado:
-        return vendaDao.getTodasAsVendas() // Substitua por uma query real
+        return vendaDao.getTodasAsVendas()
     }
 
     override fun getVendasDoAno(): Flow<List<Venda>> {
-        // Lógica para buscar vendas do ano atual usando vendaDao
-        return vendaDao.getTodasAsVendas() // Substitua por uma query real
-
+        return vendaDao.getTodasAsVendas()
     }
 
     override suspend fun updateJogo(jogo: Jogo) {
@@ -123,9 +118,7 @@ class CelestePassRepositoryImpl(
 
     @Transaction
     override suspend fun deleteVenda(venda: Venda, ingressoDoLote: Ingresso) {
-        // Primeiro, atualiza o lote de ingressos, devolvendo a quantidade
         ingressoDao.update(ingressoDoLote)
-        // Depois, deleta o registo da venda
         vendaDao.delete(venda)
     }
 
@@ -152,5 +145,4 @@ class CelestePassRepositoryImpl(
     override fun getSetorById(setorId: Long): Flow<Setor?> {
         return setorDao.getSetorById(setorId)
     }
-
 }

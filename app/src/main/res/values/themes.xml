@@ -1,15 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Tema base do aplicativo -->
     <style name="Base.Theme.CelestePass" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Cores principais -->
         <item name="colorPrimary">@color/cruzeiro_blue</item>
-        <item name="colorPrimaryVariant">@color/cruzeiro_blue_dark</item>
         <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Cores secundárias -->
         <item name="colorSecondary">@color/cruzeiro_blue</item>
-        <item name="colorSecondaryVariant">@color/cruzeiro_blue_dark</item>
         <item name="colorOnSecondary">@color/white</item>
 
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item><!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+        <!-- Containers (Material 3) -->
+        <item name="colorPrimaryContainer">@color/cruzeiro_blue_dark</item>
+        <item name="colorSecondaryContainer">@color/cruzeiro_blue_dark</item>
 
-    <style name="Theme.CelestePass" parent="Base.Theme.CelestePass" />
+        <!-- StatusBar -->
+        <item name="android:statusBarColor">@color/cruzeiro_blue_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Fullscreen -->
+        <item name="android:windowFullscreen">true</item>
+    </style>
 </resources>

@@ -20,18 +20,6 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="addGameFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
                   <entry key="addSetorFragment">
                     <value>
                       <LayoutPositions>
@@ -45,6 +33,18 @@
                     </value>
                   </entry>
                   <entry key="addTicketLotFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="adicionarJogoFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
@@ -88,17 +88,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_dashboardFragment_to_addClienteFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
                             <entry key="action_dashboardFragment_to_addGameFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="action_dashboardFragment_to_addSetorFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -161,6 +151,11 @@
                               </value>
                             </entry>
                             <entry key="action_managementFragment_to_addSetorFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_managementFragment_to_clienteDetalhesFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

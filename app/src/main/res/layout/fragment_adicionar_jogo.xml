@@ -7,7 +7,6 @@
     android:padding="16dp"
     tools:context=".ui.view.AdicionarJogoFragment">
 
-    <!-- ✅ CORREÇÃO: ImageView para o escudo do adversário, posicionado à esquerda -->
     <ImageView
         android:id="@+id/image_view_preview_escudo"
         android:layout_width="40dp"
@@ -20,10 +19,6 @@
         app:layout_constraintTop_toTopOf="@id/input_layout_adversario"
         tools:src="@drawable/ic_shield"
         tools:visibility="visible" />
-
-    <!-- ✅ CORREÇÃO: Campo de texto posicionado à direita do escudo -->
-
-    <!-- ProgressBar para feedback de carregamento do escudo -->
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/input_layout_adversario"

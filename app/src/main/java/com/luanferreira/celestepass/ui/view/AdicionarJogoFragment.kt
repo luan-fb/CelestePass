@@ -12,11 +12,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.luanferreira.celestepass.R
 import com.luanferreira.celestepass.data.TimeSelecao
-import com.luanferreira.celestepass.databinding.FragmentAddGameBinding
+import com.luanferreira.celestepass.databinding.FragmentAdicionarJogoBinding
 import com.luanferreira.celestepass.ui.viewmodel.AdicionarJogoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -25,118 +26,118 @@ import java.util.*
 @AndroidEntryPoint
 class AdicionarJogoFragment : Fragment() {
 
-    private var _binding: FragmentAddGameBinding? = null
+    private var _binding: FragmentAdicionarJogoBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: AdicionarJogoViewModel by viewModels()
+    private val args: AdicionarJogoFragmentArgs by navArgs()
+
     private var dataSelecionada: Date? = null
     private var timeAdversarioSelecionado: TimeSelecao? = null
     private var urlEscudoAdversarioAtual: String? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAddGameBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentAdicionarJogoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupAutoCompleteTextView()
+        setupListeners()
         observeViewModel()
 
-        binding.buttonSelecionarData.setOnClickListener {
-            mostrarDatePicker()
-        }
-
-        binding.buttonSalvarJogo.setOnClickListener {
-            val nomeAdversarioNoCampo = binding.editTextAdversario.text.toString()
-
-            if (timeAdversarioSelecionado == null || nomeAdversarioNoCampo != timeAdversarioSelecionado?.nomePopular) {
-                Toast.makeText(context, "Por favor, selecione um time adversário da lista.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (dataSelecionada == null) {
-                Toast.makeText(context, "Por favor, selecione uma data.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Usa o nome do timeAdversarioSelecionado e a urlEscudoAdversarioAtual que foi preenchida pelo observer
-            viewModel.salvarJogo(timeAdversarioSelecionado!!.nomePopular, urlEscudoAdversarioAtual, dataSelecionada!!)
+        if (args.jogoId != -1L) {
+            (activity as? androidx.appcompat.app.AppCompatActivity)?.supportActionBar?.title = "Editar Jogo"
         }
     }
 
-    private fun setupAutoCompleteTextView() {
+    private fun setupListeners() {
+
         viewModel.listaTimesSelecao.observe(viewLifecycleOwner) { times ->
-            if (times.isNullOrEmpty()) {
-                Log.w("AddGameFragment", "Lista de times para seleção está vazia ou nula.")
-                return@observe
-            }
+            if (times.isNullOrEmpty()) return@observe
             val nomesDosTimes = times.map { it.nomePopular }
-            val adapter = ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                nomesDosTimes
-            )
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, nomesDosTimes)
             (binding.inputLayoutAdversario.editText as? AutoCompleteTextView)?.setAdapter(adapter)
-            (binding.inputLayoutAdversario.editText as? AutoCompleteTextView)?.setOnItemClickListener { _, _, position, _ ->
-                timeAdversarioSelecionado = times.find { it.nomePopular == adapter.getItem(position) }
+        }
 
-                timeAdversarioSelecionado?.let {
-                    Log.d("AddGameFragment", "Time selecionado: ${it.nomePopular}, ID: ${it.idApi}")
-                    binding.imageViewPreviewEscudo.setImageResource(0) // Limpa preview anterior
-                    urlEscudoAdversarioAtual = null // Limpa URL anterior
-                    viewModel.buscarEscudoAdversario(it)
-                }
+        (binding.inputLayoutAdversario.editText as? AutoCompleteTextView)?.setOnItemClickListener { _, _, position, _ ->
+            val adapter = (binding.inputLayoutAdversario.editText as? AutoCompleteTextView)?.adapter
+            val nomeSelecionado = adapter?.getItem(position) as String
+            timeAdversarioSelecionado = viewModel.listaTimesSelecao.value?.find { it.nomePopular == nomeSelecionado }
+            timeAdversarioSelecionado?.let {
+                viewModel.buscarEscudoAdversario(it)
             }
         }
+
+        binding.buttonSelecionarData.setOnClickListener { mostrarDatePicker() }
+        binding.buttonSalvarJogo.setOnClickListener { salvarJogo() }
     }
+
 
     private fun observeViewModel() {
         viewModel.isLoadingEscudo.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBarEscudo.isVisible = isLoading
             binding.buttonSalvarJogo.isEnabled = !isLoading
-            if (isLoading) {
-                binding.imageViewPreviewEscudo.visibility = View.GONE
-            }
+            if (isLoading) binding.imageViewPreviewEscudo.visibility = View.GONE
         }
 
         viewModel.escudoUrlResult.observe(viewLifecycleOwner) { result ->
             result?.fold(
                 onSuccess = { url ->
                     urlEscudoAdversarioAtual = url
-                    Log.d("AddGameFragment", "URL do escudo recebida: $urlEscudoAdversarioAtual")
-                    if (!url.isNullOrEmpty()) {
-                        binding.imageViewPreviewEscudo.load(url) {
-                            placeholder(R.drawable.ic_shield) // Placeholder
-                            error(R.drawable.ic_broken_image)   // Imagem de erro
-                        }
-                        binding.imageViewPreviewEscudo.visibility = View.VISIBLE
-                    } else {
-                        binding.imageViewPreviewEscudo.setImageResource(R.drawable.ic_shield) // Placeholder se URL for nula/vazia
-                        binding.imageViewPreviewEscudo.visibility = View.VISIBLE
-                        Toast.makeText(context, "Escudo não encontrado para o time.", Toast.LENGTH_SHORT).show()
+                    binding.imageViewPreviewEscudo.load(url) {
+                        placeholder(R.drawable.ic_shield)
+                        error(R.drawable.ic_broken_image)
                     }
+                    binding.imageViewPreviewEscudo.visibility = View.VISIBLE
                 },
                 onFailure = { error ->
                     urlEscudoAdversarioAtual = null
-                    Log.e("AddGameFragment", "Erro ao buscar escudo: ${error.message}")
                     Toast.makeText(context, "Erro ao buscar escudo.", Toast.LENGTH_LONG).show()
-                    binding.imageViewPreviewEscudo.setImageResource(R.drawable.ic_broken_image) // Imagem de erro
+                    binding.imageViewPreviewEscudo.setImageResource(R.drawable.ic_broken_image)
                     binding.imageViewPreviewEscudo.visibility = View.VISIBLE
                 }
             )
         }
 
-        viewModel.jogoSalvoEvento.observe(viewLifecycleOwner) { foiSalvo ->
+        viewModel.eventoSalvo.observe(viewLifecycleOwner) { foiSalvo ->
             if (foiSalvo) {
-                Toast.makeText(context, "Jogo salvo com sucesso!", Toast.LENGTH_SHORT).show()
+                val message = if (args.jogoId == -1L) "Jogo adicionado!" else "Jogo atualizado!"
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
-                viewModel.onJogoSalvoEventoCompleto() // Reseta o evento
+                viewModel.onEventoSalvoCompleto()
             }
         }
+
+        // ✅ LÓGICA ADICIONADA: Observa o jogo para edição e preenche os campos
+        viewModel.jogoParaEdicao.observe(viewLifecycleOwner) { jogo ->
+            jogo?.let {
+                // Preenche os campos com os dados do jogo
+                (binding.inputLayoutAdversario.editText as? AutoCompleteTextView)?.setText(it.adversarioNome, false)
+                urlEscudoAdversarioAtual = it.adversarioEscudoUrl
+                binding.imageViewPreviewEscudo.load(urlEscudoAdversarioAtual) {
+                    crossfade(true)
+                    placeholder(R.drawable.ic_shield)
+                    error(R.drawable.ic_shield)
+                }
+                binding.imageViewPreviewEscudo.visibility = View.VISIBLE
+                dataSelecionada = it.data
+                updateDateInView()
+            }
+        }
+    }
+
+    private fun salvarJogo() {
+        val nomeAdversario = binding.editTextAdversario.text.toString()
+        if (nomeAdversario.isBlank()) {
+            Toast.makeText(context, "Por favor, selecione um time adversário.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (dataSelecionada == null) {
+            Toast.makeText(context, "Por favor, selecione uma data.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        viewModel.salvarJogo(nomeAdversario, urlEscudoAdversarioAtual, dataSelecionada!!)
     }
 
     private fun mostrarDatePicker() {
@@ -147,10 +148,16 @@ class AdicionarJogoFragment : Fragment() {
             val timeZone = TimeZone.getDefault()
             val offset = timeZone.getOffset(Date().time) * -1
             dataSelecionada = Date(selection + offset)
-            val formatador = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-            binding.textViewDataSelecionada.text = formatador.format(dataSelecionada!!)
+            updateDateInView()
         }
         datePicker.show(parentFragmentManager, "DATE_PICKER_TAG")
+    }
+
+    private fun updateDateInView() {
+        dataSelecionada?.let {
+            val formatador = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            binding.textViewDataSelecionada.text = formatador.format(it)
+        }
     }
 
     override fun onDestroyView() {

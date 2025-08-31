@@ -2,12 +2,18 @@ package com.luanferreira.celestepass.ui.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -35,13 +41,37 @@ class DetalhesJogoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setupMenu()
         setupViewPager()
         observeViewModel()
 
         binding.fabDetalhesJogo.setOnClickListener {
             mostrarDialogoDeAcoes()
         }
+    }
+
+    private fun setupMenu() {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.detalhes_jogo_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_edit -> {
+                        val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToAddGameFragment(args.jogoId)
+                        findNavController().navigate(action)
+                        true
+                    }
+                    R.id.action_delete -> {
+                        mostrarDialogoDelecao()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun setupViewPager() {
@@ -119,7 +149,7 @@ class DetalhesJogoFragment : Fragment() {
                         val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToAddTicketLotFragment(args.jogoId)
                         findNavController().navigate(action)
                     }
-                    1 -> { // Registar Venda
+                    1 -> {
                         val action = DetalhesJogoFragmentDirections.actionDetalhesJogoFragmentToRegistarVendaFragment(args.jogoId)
                         findNavController().navigate(action)
                     }
@@ -129,8 +159,6 @@ class DetalhesJogoFragment : Fragment() {
             .show()
     }
 
-    // A lógica de deleção ainda existe, mas não está ligada a um botão no novo layout.
-    // Poderíamos adicionar um ícone de lixeira no cabeçalho no futuro.
     private fun mostrarDialogoDelecao()
     {
         AlertDialog.Builder(requireContext())

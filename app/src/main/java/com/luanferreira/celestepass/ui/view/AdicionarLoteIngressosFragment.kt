@@ -12,18 +12,18 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.luanferreira.celestepass.data.model.Setor
-import com.luanferreira.celestepass.databinding.FragmentAddTicketLotBinding
+import com.luanferreira.celestepass.databinding.FragmentAdicionarLoteIngressoBinding
 import com.luanferreira.celestepass.ui.viewmodel.AdicionarLoteIngressoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AdicionarLoteIngressosFragment : Fragment() {
 
-    private var _binding: FragmentAddTicketLotBinding? = null
+    private var _binding: FragmentAdicionarLoteIngressoBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: AdicionarLoteIngressoViewModel by viewModels()
-    private val args: AddTicketLotFragmentArgs by navArgs()
+    private val args: AdicionarLoteIngressosFragmentArgs by navArgs()
 
     private var setorSelecionado: Setor? = null
 
@@ -31,7 +31,7 @@ class AdicionarLoteIngressosFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAddTicketLotBinding.inflate(inflater, container, false)
+        _binding = FragmentAdicionarLoteIngressoBinding.inflate(inflater, container, false)
         return binding.root
     }
 

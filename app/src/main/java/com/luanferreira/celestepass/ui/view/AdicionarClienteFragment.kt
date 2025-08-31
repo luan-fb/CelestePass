@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.luanferreira.celestepass.databinding.FragmentAddClienteBinding
+import com.luanferreira.celestepass.databinding.FragmentAdicionarClienteBinding
 import com.luanferreira.celestepass.ui.viewmodel.AdicionarClienteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -19,14 +19,14 @@ import java.util.*
 
 @AndroidEntryPoint
 class AdicionarClienteFragment : Fragment() {
-    private var _binding: FragmentAddClienteBinding? = null
+    private var _binding: FragmentAdicionarClienteBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AdicionarClienteViewModel by viewModels()
-    private val args: AddClienteFragmentArgs by navArgs()
+    private val args: AdicionarClienteFragmentArgs by navArgs()
     private var dataNascimentoSelecionada: Date? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentAddClienteBinding.inflate(inflater, container, false)
+        _binding = FragmentAdicionarClienteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -35,19 +35,16 @@ class AdicionarClienteFragment : Fragment() {
 
         // ESTA É A LÓGICA CHAVE QUE ESTAVA EM FALTA
         viewModel.clienteParaEdicao.observe(viewLifecycleOwner) { cliente ->
-            // Este bloco só é executado se estivermos a editar (cliente não é nulo)
             cliente?.let {
-                // 1. Altera o título da tela na barra de ferramentas
                 (activity as? AppCompatActivity)?.supportActionBar?.title = "Editar Cliente"
 
-                // 2. Pré-preenche todos os campos do formulário
                 binding.editTextNomeCliente.setText(it.nome)
                 binding.editTextCpfCliente.setText(it.cpf)
                 binding.editTextEmailCliente.setText(it.email)
                 binding.editTextTelefoneCliente.setText(it.telefone)
 
                 it.dataNascimento?.let { data ->
-                    dataNascimentoSelecionada = data // Guarda a data para não a perder
+                    dataNascimentoSelecionada = data
                     val formatador = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
                     binding.textViewDataNascimentoSelecionada.text = formatador.format(data)
                     binding.textViewDataNascimentoSelecionada.visibility = View.VISIBLE

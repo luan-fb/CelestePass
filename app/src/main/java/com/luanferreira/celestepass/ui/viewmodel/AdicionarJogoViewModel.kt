@@ -1,10 +1,7 @@
 package com.luanferreira.celestepass.ui.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.luanferreira.celestepass.data.TimeSelecao
 import com.luanferreira.celestepass.data.TimesPredefinidos
 import com.luanferreira.celestepass.data.model.Jogo
@@ -16,9 +13,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AdicionarJogoViewModel @Inject constructor(
-    private val repository: CelestePassRepository
+    private val repository: CelestePassRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private val jogoId: Long = savedStateHandle.get<Long>("jogoId") ?: -1L
+
+    val jogoParaEdicao: LiveData<Jogo?> = if (jogoId != -1L) {
+        repository.getJogoPorId(jogoId).asLiveData()
+    } else {
+        MutableLiveData(null)
+    }
+
+    private val _eventoSalvo = MutableLiveData<Boolean>()
+    val eventoSalvo: LiveData<Boolean> get() = _eventoSalvo
+
+    // --- Lógica da API e Lista de Times ---
     private val _listaTimesSelecao = MutableLiveData<List<TimeSelecao>>()
     val listaTimesSelecao: LiveData<List<TimeSelecao>> get() = _listaTimesSelecao
 
@@ -27,9 +37,6 @@ class AdicionarJogoViewModel @Inject constructor(
 
     private val _isLoadingEscudo = MutableLiveData<Boolean>()
     val isLoadingEscudo: LiveData<Boolean> get() = _isLoadingEscudo
-
-    private val _jogoSalvoEvento = MutableLiveData<Boolean>()
-    val jogoSalvoEvento: LiveData<Boolean> get() = _jogoSalvoEvento
 
     init {
         carregarTimesPredefinidos()
@@ -44,43 +51,33 @@ class AdicionarJogoViewModel @Inject constructor(
         _escudoUrlResult.value = null
         viewModelScope.launch {
             try {
-                Log.d("AddGameViewModel", "Buscando escudo para ID: ${timeSelecionado.idApi}")
                 val response = repository.getEscudoDoTimePelaApi(timeSelecionado.idApi)
                 if (response.isSuccessful) {
-                    val crestUrl = response.body()?.crestUrl
-                    Log.d("AddGameViewModel", "API Sucesso. URL Escudo: $crestUrl")
-                    _escudoUrlResult.postValue(Result.success(crestUrl))
+                    _escudoUrlResult.postValue(Result.success(response.body()?.crestUrl))
                 } else {
-                    Log.e("AddGameViewModel", "API Erro. Código: ${response.code()}, Mensagem: ${response.message()}")
                     _escudoUrlResult.postValue(Result.failure(Exception("Erro API: ${response.code()}")))
                 }
             } catch (e: Exception) {
-                Log.e("AddGameViewModel", "Exceção ao buscar escudo: ${e.message}", e)
                 _escudoUrlResult.postValue(Result.failure(e))
             }
             _isLoadingEscudo.postValue(false)
         }
     }
 
-    fun salvarJogo(nomeAdversario: String, escudoUrl: String?, data: Date) {
-        if (nomeAdversario.isBlank()) {
-            Log.w("AddGameViewModel", "Tentativa de salvar jogo com nome de adversário em branco.")
-            return
-        }
-        val novoJogo = Jogo(
-            adversarioNome = nomeAdversario,
-            adversarioEscudoUrl = escudoUrl,
-            data = data
-        )
+    fun salvarJogo(adversarioNome: String, adversarioEscudoUrl: String?, data: Date) {
         viewModelScope.launch {
-            Log.d("AddGameViewModel", "Salvando jogo: $novoJogo")
-            repository.insertJogo(novoJogo)
-            _jogoSalvoEvento.postValue(true) // Notifica que o jogo foi salvo
-            Log.d("AddGameViewModel", "Jogo salvo no repositório.")
+            if (jogoId == -1L) {
+                val novoJogo = Jogo(adversarioNome = adversarioNome, adversarioEscudoUrl = adversarioEscudoUrl, data = data)
+                repository.insertJogo(novoJogo)
+            } else {
+                val jogoAtualizado = Jogo(id = jogoId, adversarioNome = adversarioNome, adversarioEscudoUrl = adversarioEscudoUrl, data = data)
+                repository.updateJogo(jogoAtualizado)
+            }
+            _eventoSalvo.postValue(true)
         }
     }
 
-    fun onJogoSalvoEventoCompleto() {
-        _jogoSalvoEvento.value = false // Reseta o evento
+    fun onEventoSalvoCompleto() {
+        _eventoSalvo.value = false
     }
 }
